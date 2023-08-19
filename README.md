@@ -3,7 +3,7 @@
 ![Realeses](https://github.com/CCDirectLink/organization/blob/master/assets/badges/releases%402x.png)  
 
 ## Dependencies
-2. [input-api](https://github.com/CCDirectLink/input-api)
+1. [input-api](https://github.com/CCDirectLink/input-api)
 		
 
 ## Building
