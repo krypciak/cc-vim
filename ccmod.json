@@ -1,0 +1,29 @@
+{
+	"id": "cc-vim",
+	"version": "1.0.0",
+	"title": {
+		"en_US": "Vim Command Mode",
+		"de_DE": "Vim Command Mode",
+		"fr_FR": "Vim Command Mode",
+		"zh_CN": "Vim Command Mode",
+		"zh_TW": "Vim Command Mode",
+		"ja_JP": "Vim Command Mode",
+		"ko_KR": "Vim Command Mode"
+	},
+	"description": {
+		"en_US": "Adds a popup command prompt",
+		"de_DE": "Adds a popup command prompt",
+		"fr_FR": "Adds a popup command prompt",
+		"zh_CN": "Adds a popup command prompt",
+		"zh_TW": "Adds a popup command prompt",
+		"ja_JP": "Adds a popup command prompt",
+		"ko_KR": "Adds a popup command prompt"
+	},
+	"icons": {
+		"24": "icon.png"
+	},
+	"plugin": "plugin.js",
+	"dependencies": {
+		"input-api": ">=1.0.0"
+	}
+}
