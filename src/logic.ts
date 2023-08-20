@@ -8,6 +8,7 @@ interface Alias {
     desc: string
     command: string | ((...args: string[]) => void)
     condition: 'ingame' | 'global' | 'titlemenu' | ((ingame: boolean) => boolean)
+    keys: string[]
 }
 
 export class VimLogic {
@@ -23,14 +24,10 @@ export class VimLogic {
         minMatchCharLength: 1,
         shouldSort: true,
         findAllMatches: true,
-        keys: [
-            { name: 'origin', weight: 1 },
-            { name: 'name', weight: 1 },
-            { name: 'desc', weight: 0.3 }
-        ],
+        keys: [ 'keys' ],
         ignoreLocation: true,
-        useExtendedSearch: true,
-        ignoreFieldNorm: true,
+        useExtendedSearch: false,
+        ignoreFieldNorm: false,
         threshold: 1,
         fieldNormWeight: 1,
     }
@@ -43,7 +40,7 @@ export class VimLogic {
 
 
     addAlias(origin: string, name: string, desc: string, condition: 'ingame' | 'global' | 'titlemenu' | ((ingame: boolean) => boolean), command: string | ((...args: string[]) => void)) {
-        const alias: Alias = { origin, name, desc, condition, command }
+        const alias: Alias = { origin, name, desc, condition, command, keys: [ origin, name, desc ] }
         this.aliases.push(alias)
         this.aliasesMap.set(alias.name, alias.command)
     }
@@ -76,37 +73,49 @@ export class VimLogic {
         return suggestions
     }
     
-    execute(cmd: string | ((...args: string[]) => void), fallback = false, args: string[] = []): boolean {
+    execute(cmd: string | ((...args: string[]) => void), fallback = false, funcArgs: string[] = []): boolean {
         if (! cmd) { return false }
         if (typeof cmd === 'function') {
-            cmd(...args)
+            cmd(...funcArgs)
             return true
         }
         const split: string[] = cmd.split(' ')
-        const base: string = split[0].toLowerCase()
-        split.shift()
-
-        let toExec: string | ((...args: string[]) => void) = cmd
-        if (! fallback && this.aliasesMap.has(base)) {
-            toExec = this.aliasesMap.get(base)!
-        }
-        try {
-            if (typeof toExec === 'string') {
-                (0, eval)(toExec)
-            } else {
-                toExec(...split)
+        const baseEndIndex = cmd.indexOf(':')
+        let base: string = '', args: string[] = []
+        if (baseEndIndex == -1) {
+            if (split.length == 1) {
+                base = cmd
+            } else if (! fallback) {
+                throw new Error('invalid command')
             }
-            return true
-        } catch (e: any) {
-            const item = this.suggestions[0]
-            if (fallback && item && item.score && item.score < this.completionThreshold) {
-                return this.execute(item.item.command, false, split)
-            } else {
-                ig.error('Invalid command')
+        } else {
+            base = cmd.substring(0, baseEndIndex)
+            args = cmd.substring(baseEndIndex+1).split(' ')
+        }
+
+        let exec: string | ((...args: string[]) => void) | null = null
+        if (base && this.aliasesMap.has(base)) {
+            exec = this.aliasesMap.get(base)!
+        }
+        if (exec) {
+            try {
+                if (typeof exec === 'string') {
+                    (0, eval)(exec)
+                } else {
+                    exec(...split)
+                }
+                return true
+            } catch (e: any) {
                 console.log(e)
                 return false
             }
+        } else if (fallback) {
+            const item = this.suggestions[0]
+            if (item && item.score! < this.completionThreshold) {
+                return this.execute(item.item.command, false, split)
+            }
         }
+        throw new Error('how')
     }
 
     inputEvent(event: InputEvent) {
@@ -145,7 +154,7 @@ export class VimLogic {
             const alias: Alias = searchResult.item
 
             const tr = table.insertRow()
-            const rowData: string[] = [ alias.origin, alias.name, alias.desc, alias.command.toString() ]
+            const rowData: string[] = [ alias.origin, alias.name, alias.desc, searchResult.score!.toString(), alias.command.toString() ]
             for (const entry of rowData) {
                 const cell = tr.insertCell()
                 cell.style.paddingRight = '20px'
