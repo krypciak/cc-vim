@@ -8,7 +8,7 @@ interface Alias {
     name: string
     desc: string
     command: string | (() => void)
-    condition: 'ingame' | 'global' | (() => boolean)
+    condition: 'ingame' | 'global' | 'titlemenu' | ((ingame: boolean) => boolean)
 }
 
 export class VimLogic {
@@ -27,7 +27,7 @@ export class VimLogic {
         shouldSort: true,
         includeMatches: true,
         findAllMatches: false,
-        minMatchCharLength: 1,
+        minMatchCharLength: 0,
         location: 0,
         threshold: 0.4,
         distance: 100,
@@ -48,37 +48,38 @@ export class VimLogic {
     aliasesMap: Map<string, string | (() => void)> = new Map()
     aliases: Alias[] = []
 
-    addAlias(origin: string, name: string, desc: string, condition: 'ingame' | 'global' | (() => boolean), command: string | (() => void)) {
+    addAlias(origin: string, name: string, desc: string, condition: 'ingame' | 'global' | 'titlemenu' | ((ingame: boolean) => boolean), command: string | (() => void)) {
         const alias: Alias = { origin, name, desc, condition, command }
         this.aliases.push(alias)
         this.aliasesMap.set(alias.name, alias.command)
     }
     
-    updateAliases(options: Fuse.IFuseOptions<Alias> = this.fuseOptions) {
-        this.fuse = new Fuse(this.aliases, options)
+    updateAliases(aliases: Alias[] = this.aliases, options: Fuse.IFuseOptions<Alias> = this.fuseOptions) {
+        this.fuse = new Fuse(aliases, options)
     }
 
     getPossibleAliases(): Alias[] {
         const suggestions: Alias[] = []
         this.aliases.forEach(a => suggestions.push(a))
         // @ts-expect-error ig.game.maps not in typedefes
-        const ingame: boolean = ig.game.maps.length == 0
+        const ingame: boolean = ig.game.maps.length != 0
 
         return suggestions.filter(a => {
             if (typeof a.condition == 'string') {
-                return a.condition == 'global' || ingame
+                switch (a.condition) {
+                    case 'global': return true
+                    case 'ingame': return ingame
+                    case 'titlemenu': return ! ingame
+                }
             } else {
-                return a.condition()
+                return a.condition(ingame)
             }
         })
     }
 
-    private search(input: string, includeAll: boolean = false): Fuse.FuseResult<Alias>[] {
-        let options = this.fuseOptions
-        if (includeAll) {
-            options = ig.copy(options)
-            options.threshold = 1
-
+    private search(input: string, conditionFilter = false): Fuse.FuseResult<Alias>[] {
+        if (conditionFilter) {
+            this.updateAliases(this.getPossibleAliases())
         }
         const suggestions = this.suggestions = this.fuse.search(input)
         return suggestions
@@ -132,7 +133,7 @@ export class VimLogic {
         this.gui.suggestionTable.innerHTML = ''
         
         const inputValue = this.gui.input.value.toLowerCase()
-        const suggestions: Fuse.FuseResult<Alias>[] = inputValue == '?' ? : this.search(inputValue)
+        const suggestions: Fuse.FuseResult<Alias>[] = this.search(inputValue, true)
 
         const table: HTMLTableElement = document.getElementById('suggestionTable') as HTMLTableElement
 
