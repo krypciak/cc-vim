@@ -1,16 +1,27 @@
 import VimGui from './plugin.js'
 import Fuse from "fuse.js"
 
+declare const chrome: { runtime: { reload: () => void } }
+
+interface Alias {
+    origin: string
+    name: string
+    desc: string
+    command: string | (() => void)
+    global: boolean
+}
+
 export class VimLogic {
     constructor(public gui: VimGui) {
         Object.assign(window, {vim: this})
-        this.addAlias('cc-vim', 'reload', 'Reload the game without closing the window', 'window.location.reload()')
-        this.addAlias('cc-vim', 'reloadnl', 'Reload the game without memory leaks (closes the window)', 'chrome ? chrome.runtime.reload() : window.location.reload()')
-        this.addAlias('cc-vim', 'ppos', 'Prints player position', 'console.log(ig.game.playerEntity ? ig.game.playerEntity.coll.pos : null)')
-        this.addAlias('cc-vim', 'player', 'Prints player entity', 'console.log(ig.game.playerEntity)')
+        this.addAlias('cc-vim', 'reload', 'Reload the game without closing the window', true, () => { window.location.reload() })
+        this.addAlias('cc-vim', 'reloadnl', 'Reload the game without memory leaks (closes the window)', true, () => { chrome ? chrome.runtime.reload() : window.location.reload() })
+
+        this.addAlias('cc-vim', 'ppos', 'Prints player position', false, () => { console.log(ig.game.playerEntity ? ig.game.playerEntity.coll.pos : null) })
+        this.addAlias('cc-vim', 'player', 'Prints player entity', false, () => { console.log(ig.game.playerEntity) })
     }
     
-    fuseOptions: Fuse.IFuseOptions<unknown> = {
+    fuseOptions: Fuse.IFuseOptions<Alias> = {
         isCaseSensitive: false,
         includeScore: true,
         shouldSort: true,
@@ -24,39 +35,42 @@ export class VimLogic {
         ignoreLocation: false,
         ignoreFieldNorm: false,
         fieldNormWeight: 1,
-        keys: [''],
+        keys: ['origin', 'name', 'desc'],
     }
     completionThreshold: number = 0.3
-    fuse!: Fuse<string>
-    suggestions!: Fuse.FuseResult<string>[]
+    fuse!: Fuse<Alias>
+    suggestions!: Fuse.FuseResult<Alias>[]
     
-    aliases: Map<string, string | (() => void)> = new Map()
-    aliasesKeys: string[] = []
+    aliasesMap: Map<string, string | (() => void)> = new Map()
+    aliases: Alias[] = []
 
-    addAlias(origin: string, name: string, desc: string, command: string | (() => void)) {
-        this.aliases.set(name, command)
-        this.aliasesKeys.push(name)
+    addAlias(origin: string, name: string, desc: string, global: boolean, command: string | (() => void)) {
+        const alias: Alias = { origin, name, desc, global, command }
+        this.aliases.push(alias)
+        this.aliasesMap.set(alias.name, alias.command)
     }
     
     updateAliases() {
-        this.fuse = new Fuse(this.aliasesKeys, this.fuseOptions)
+        this.fuse = new Fuse(this.aliases, this.fuseOptions)
     }
 
-    private search(input: string): Fuse.FuseResult<string>[] {
+    private search(input: string): Fuse.FuseResult<Alias>[] {
         const suggestions = this.suggestions = this.fuse.search(input)
         return suggestions
     }
     
-    execute(cmd: string, fallback = false): boolean {
-        if (! cmd) {
-            return false
+    execute(cmd: string | (() => void), fallback = false): boolean {
+        if (! cmd) { return false }
+        if (typeof cmd === 'function') {
+            cmd()
+            return true
         }
         const split: string[] = cmd.split(' ')
         const base: string = split[0].toLowerCase()
 
         let toExec: string | (() => void) = cmd
-        if (this.aliases.has(base)) {
-            toExec = this.aliases.get(base)!
+        if (this.aliasesMap.has(base)) {
+            toExec = this.aliasesMap.get(base)!
         }
         try {
             if (typeof toExec === 'string') {
@@ -68,7 +82,7 @@ export class VimLogic {
         } catch (e: any) {
             const item = this.suggestions[0]
             if (fallback && item.score! < this.completionThreshold) {
-                return this.execute(item.item)
+                return this.execute(item.item.command)
             } else {
                 console.log(e)
                 return false
@@ -90,31 +104,38 @@ export class VimLogic {
 
     autocomplete() {
         // clear previous suggestions
-        this.gui.suggestions.innerHTML = ''
+        this.gui.suggestionTable.innerHTML = ''
         
         const inputValue = this.gui.input.value.toLowerCase()
-        const suggestions: Fuse.FuseResult<string>[] = this.search(inputValue)
+        const suggestions: Fuse.FuseResult<Alias>[] = this.search(inputValue)
+
+        const table: HTMLTableElement = document.getElementById('suggestionTable') as HTMLTableElement
 
         for (let i = 0; i < suggestions.length; i++) {
-            const str: string = suggestions[i].item
-            const suggestionElement: HTMLElement = document.createElement('div')
-            if (i == 0) {
-                const score: number = suggestions[i].score!
-                if (score < this.completionThreshold) {
-                    suggestionElement.style.backgroundColor = 'blue'
-                } else {
-                    suggestionElement.style.backgroundColor = ''
-                }
+            const searchResult = suggestions[i]
+            const alias: Alias = searchResult.item
+
+            const tr = table.insertRow()
+            const rowData: string[] = [ alias.origin, alias.name, alias.desc, alias.command.toString() ]
+            for (const entry of rowData) {
+                const cell = tr.insertCell()
+                cell.style.paddingRight = '20px'
+                cell.textContent = entry
             }
 
-            suggestionElement.textContent = str
+            if (i == 0) {
+                const score: number = searchResult.score!
+                if (score < this.completionThreshold) {
+                    tr.style.backgroundColor = 'blue'
+                } else {
+                    tr.style.backgroundColor = ''
+                }
+            }
         
-            suggestionElement.addEventListener('click', () => {
-                  this.gui.input.value = str
-                  this.gui.suggestions.innerHTML = ''
+            tr.addEventListener('click', () => {
+                  this.gui.input.value = alias.name
+                  this.gui.suggestionTable.innerHTML = ''
             })
-
-            this.gui.suggestions.appendChild(suggestionElement)
         }
     }
 }

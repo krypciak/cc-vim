@@ -7,7 +7,7 @@ export default class VimGui {
     visible: boolean = false
     block!: HTMLElement
     input!: HTMLInputElement
-    suggestions!: HTMLElement
+    suggestionTable!: HTMLTableElement
     logic: VimLogic = new VimLogic(this)
 
     constructor(mod: { baseDirectory: string }) {
@@ -43,24 +43,25 @@ export default class VimGui {
 							display: none;
 							position: absolute;
 							top: 40%;
-                            left: 20%;
-							width: 60%;
-							background: rgba(0, 0, 0, 0.8);
+                            left: 5%;
+							width: 90%;
+							background: rgba(0, 0, 0, 1);
 							color: white;
                             font-size: 150%;
 							display: block;">
-						> <input id="viminput" style="
-                            background: rgba(0, 0, 0, 0.8);
+						<p style="width: 3%">\></p>
+                        <input id="viminput" style="
+                            background: rgba(0, 0, 0, 1);
                             font-size: 150%;
-							width: 98%;
+							width: 97%;
                         ">
-                        <div id="suggestions"></div>
+                        <table id="suggestionTable" style=""></table>
 					</div>
 				`)
 
 				self.block = document.getElementById('vim')!
                 const input = self.input = document.getElementById('viminput') as HTMLInputElement
-                self.suggestions = document.getElementById('suggestions')!
+                self.suggestionTable = document.getElementById('suggestionTable')! as HTMLTableElement
 
                 input.onkeydown = (e: KeyboardEvent) => { self.logic.keyEvent(e) }
                 self.hide()
@@ -77,6 +78,7 @@ export default class VimGui {
     show() {
         this.visible = true
         this.block.style.display = 'block'
+        this.input.value = ''
         this.input.focus()
         this.logic.autocomplete()
     }
