@@ -48,7 +48,7 @@ export default class VimGui {
                             font-size: 150%;
 							display: block;
                         ">
-						<input id="viminput" style="
+						<input id="viminput" autocomplete="off" style="
                             background: rgba(0, 0, 0, 1);
                             font-size: 150%;
 							width: 100%;
