@@ -8,6 +8,7 @@ export default class VimGui {
     block!: HTMLElement
     input!: HTMLInputElement
     suggestionTable!: HTMLTableElement
+    suggestionArgTable!: HTMLTableElement
     logic: VimLogic = new VimLogic(this)
 
     constructor(mod: { baseDirectory: string }) {
@@ -63,10 +64,25 @@ export default class VimGui {
                 const input = self.input = document.getElementById('viminput') as HTMLInputElement
                 self.suggestionTable = document.getElementById('suggestionTable')! as HTMLTableElement
 
-                input.onkeydown = (e: KeyboardEvent) => { self.logic.keyEvent(e) }
+                input.addEventListener('keydown', (e: KeyboardEvent) => { self.keyEvent(e) })
+                input.addEventListener('input', (e: any) => { self.logic.inputEvent(e) })
                 self.hide()
 			}
 		});
+    }
+
+    keyEvent(event: KeyboardEvent) {
+        if (event.key == 'Enter') {
+            event.preventDefault()
+            this.logic.execute((event.target as HTMLInputElement).value.trim(), true)
+            this.input.value = ''
+            this.hide()
+        } else if (event.key == ';' || event.key == 'Escape') {
+            this.hide()
+        } else if (event.key == 'Tab') {
+            event.preventDefault()
+            this.logic.tab()
+        }
     }
 
     hide() {
@@ -80,7 +96,7 @@ export default class VimGui {
         this.block.style.display = 'block'
         this.input.value = ''
         this.input.focus()
-        this.logic.updateAliases()
-        this.logic.autocomplete()
+        this.logic.updateAliases(this.logic.getPossibleAliases())
+        this.logic.autocomplete('')
     }
 }

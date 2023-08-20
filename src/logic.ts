@@ -1,54 +1,48 @@
 import VimGui from './plugin.js'
-import Fuse from "fuse.js"
-
-declare const chrome: { runtime: { reload: () => void } }
+import Fuse from 'fuse.js'
+import { addBaseAliases } from './aliases.js'
 
 interface Alias {
     origin: string
     name: string
     desc: string
-    command: string | (() => void)
+    command: string | ((...args: string[]) => void)
     condition: 'ingame' | 'global' | 'titlemenu' | ((ingame: boolean) => boolean)
 }
 
 export class VimLogic {
     constructor(public gui: VimGui) {
         Object.assign(window, {vim: this})
-        this.addAlias('cc-vim', 'reload', 'Reload the game without closing the window', 'global', () => { window.location.reload() })
-        this.addAlias('cc-vim', 'reloadnl', 'Reload the game without memory leaks (closes the window)', 'global', () => { chrome ? chrome.runtime.reload() : window.location.reload() })
-
-        this.addAlias('cc-vim', 'ppos', 'Prints player position', 'ingame', () => { console.log(ig.game.playerEntity ? ig.game.playerEntity.coll.pos : null) })
-        this.addAlias('cc-vim', 'player', 'Prints player entity', 'ingame', () => { console.log(ig.game.playerEntity) })
+        addBaseAliases()
     }
     
     fuseOptions: Fuse.IFuseOptions<Alias> = {
         isCaseSensitive: false,
         includeScore: true,
-        shouldSort: true,
         includeMatches: true,
-        findAllMatches: false,
-        minMatchCharLength: 0,
-        location: 0,
-        threshold: 0.4,
-        distance: 100,
-        useExtendedSearch: false,
-        ignoreLocation: false,
-        ignoreFieldNorm: false,
-        fieldNormWeight: 1,
+        minMatchCharLength: 1,
+        shouldSort: true,
+        findAllMatches: true,
         keys: [
-               { name: 'origin', weight: 0.3 },
-               { name: 'name', weight: 0.7 },
-               { name: 'desc', weight: 0.3 }
+            { name: 'origin', weight: 1 },
+            { name: 'name', weight: 1 },
+            { name: 'desc', weight: 0.3 }
         ],
+        ignoreLocation: true,
+        useExtendedSearch: true,
+        ignoreFieldNorm: true,
+        threshold: 1,
+        fieldNormWeight: 1,
     }
-    completionThreshold: number = 0.3
+    completionThreshold: number = 1
     fuse!: Fuse<Alias>
     suggestions!: Fuse.FuseResult<Alias>[]
     
-    aliasesMap: Map<string, string | (() => void)> = new Map()
+    aliasesMap: Map<string, string | ((...args: string[]) => void)> = new Map()
     aliases: Alias[] = []
 
-    addAlias(origin: string, name: string, desc: string, condition: 'ingame' | 'global' | 'titlemenu' | ((ingame: boolean) => boolean), command: string | (() => void)) {
+
+    addAlias(origin: string, name: string, desc: string, condition: 'ingame' | 'global' | 'titlemenu' | ((ingame: boolean) => boolean), command: string | ((...args: string[]) => void)) {
         const alias: Alias = { origin, name, desc, condition, command }
         this.aliases.push(alias)
         this.aliasesMap.set(alias.name, alias.command)
@@ -77,73 +71,81 @@ export class VimLogic {
         })
     }
 
-    private search(input: string, conditionFilter = false): Fuse.FuseResult<Alias>[] {
-        if (conditionFilter) {
-            this.updateAliases(this.getPossibleAliases())
-        }
-        const suggestions = this.suggestions = this.fuse.search(input)
+    private search(base: string): Fuse.FuseResult<Alias>[] {
+        const suggestions = this.suggestions = this.fuse.search(base)
         return suggestions
     }
     
-    execute(cmd: string | (() => void), fallback = false): boolean {
+    execute(cmd: string | ((...args: string[]) => void), fallback = false, args: string[] = []): boolean {
         if (! cmd) { return false }
         if (typeof cmd === 'function') {
-            cmd()
+            cmd(...args)
             return true
         }
         const split: string[] = cmd.split(' ')
         const base: string = split[0].toLowerCase()
+        split.shift()
 
-        let toExec: string | (() => void) = cmd
-        if (this.aliasesMap.has(base)) {
+        let toExec: string | ((...args: string[]) => void) = cmd
+        if (! fallback && this.aliasesMap.has(base)) {
             toExec = this.aliasesMap.get(base)!
         }
         try {
             if (typeof toExec === 'string') {
                 (0, eval)(toExec)
             } else {
-                toExec()
+                toExec(...split)
             }
             return true
         } catch (e: any) {
             const item = this.suggestions[0]
-            if (fallback && item.score! < this.completionThreshold) {
-                return this.execute(item.item.command)
+            if (fallback && item && item.score && item.score < this.completionThreshold) {
+                return this.execute(item.item.command, false, split)
             } else {
+                ig.error('Invalid command')
                 console.log(e)
                 return false
             }
         }
     }
 
-    keyEvent(event: KeyboardEvent) {
-        if (event.key == 'Enter') {
-            this.execute(this.gui.input.value.trim(), true)
-            this.gui.input.value = ''
-            this.gui.hide()
-        } else if (event.key == ';' || event.key == 'Escape') {
-            this.gui.hide()
-        } else {
-            this.autocomplete()
-        }
+    inputEvent(event: InputEvent) {
+        this.autocomplete((event.target as HTMLInputElement).value)
     }
 
-    autocomplete() {
+    tab() {
+        this.gui.input.value = this.suggestions[0].item.name + ': '
+    }
+
+    autocomplete(inputValue: string) {
         // clear previous suggestions
-        this.gui.suggestionTable.innerHTML = ''
+        const table: HTMLTableElement = this.gui.suggestionTable
+        table.innerHTML = ''
         
-        const inputValue = this.gui.input.value.toLowerCase()
-        const suggestions: Fuse.FuseResult<Alias>[] = this.search(inputValue, true)
+        inputValue = inputValue.toLowerCase()
+        const cursorPosition: number = this.gui.input.selectionStart!
+        let baseEndPos = inputValue.indexOf(':')
+        if (baseEndPos == -1) {
+            baseEndPos = inputValue.length
+        }
+        const isBase: boolean = baseEndPos >= cursorPosition
+        const baseStr = inputValue.substring(0, baseEndPos)
 
-        const table: HTMLTableElement = document.getElementById('suggestionTable') as HTMLTableElement
+        let suggestions: Fuse.FuseResult<Alias>[] = this.search(baseStr)
 
-        for (let i = 0; i < suggestions.length; i++) {
+        if (! isBase && suggestions) {
+            const selectedBase = suggestions[0]
+            if (selectedBase && selectedBase.score! < this.completionThreshold) {
+                this.suggestions = suggestions = [ suggestions[0] ]
+            }
+        }
+
+        for (let i = 0; i < Math.min(5, suggestions.length); i++) {
             const searchResult = suggestions[i]
             const alias: Alias = searchResult.item
 
             const tr = table.insertRow()
-            const commandString: string = typeof alias.command == 'string' ? alias.command : alias.command.toString().slice(8).replace(/ }$/, '')
-            const rowData: string[] = [ alias.origin, alias.name, alias.desc, commandString ]
+            const rowData: string[] = [ alias.origin, alias.name, alias.desc, alias.command.toString() ]
             for (const entry of rowData) {
                 const cell = tr.insertCell()
                 cell.style.paddingRight = '20px'
