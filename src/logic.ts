@@ -90,7 +90,8 @@ export class VimLogic {
             }
         } else {
             base = cmd.substring(0, baseEndIndex)
-            args = cmd.substring(baseEndIndex+1).split(' ')
+            args = cmd.substring(baseEndIndex+1).trim().split(' ')
+            debugger
         }
 
         let exec: string | ((...args: string[]) => void) | null = null
@@ -102,7 +103,7 @@ export class VimLogic {
                 if (typeof exec === 'string') {
                     (0, eval)(exec)
                 } else {
-                    exec(...split)
+                    exec(...args)
                 }
                 return true
             } catch (e: any) {
@@ -112,7 +113,7 @@ export class VimLogic {
         } else if (fallback) {
             const item = this.suggestions[0]
             if (item && item.score! < this.completionThreshold) {
-                return this.execute(item.item.command, false, split)
+                return this.execute(item.item.command, false, args)
             }
         }
         throw new Error('how')
@@ -154,7 +155,7 @@ export class VimLogic {
             const alias: Alias = searchResult.item
 
             const tr = table.insertRow()
-            const rowData: string[] = [ alias.origin, alias.name, alias.desc, searchResult.score!.toString(), alias.command.toString() ]
+            const rowData: string[] = [ alias.origin, alias.name, alias.desc, alias.command.toString() ]
             for (const entry of rowData) {
                 const cell = tr.insertCell()
                 cell.style.paddingRight = '20px'
