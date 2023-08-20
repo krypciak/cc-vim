@@ -27,8 +27,6 @@ export default class VimGui {
         const kb = this.keybinder
         kb.addHeader('vim', 'vim')
         kb.updateLabels()
-
-        this.logic.updateAliases()
     }
 
     addInjects() {
@@ -48,14 +46,16 @@ export default class VimGui {
 							background: rgba(0, 0, 0, 1);
 							color: white;
                             font-size: 150%;
-							display: block;">
-						<p style="width: 3%">\></p>
-                        <input id="viminput" style="
+							display: block;
+                        ">
+						<input id="viminput" style="
                             background: rgba(0, 0, 0, 1);
                             font-size: 150%;
-							width: 97%;
+							width: 100%;
                         ">
-                        <table id="suggestionTable" style=""></table>
+                        <table id="suggestionTable" style="
+                            border-collapse: collapse
+                        "></table>
 					</div>
 				`)
 
@@ -80,6 +80,7 @@ export default class VimGui {
         this.block.style.display = 'block'
         this.input.value = ''
         this.input.focus()
+        this.logic.updateAliases()
         this.logic.autocomplete()
     }
 }
