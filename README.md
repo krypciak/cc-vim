@@ -1,9 +1,6 @@
 [![](https://tokei.rs/b1/github/krypciak/cc-vim?type=typescript&label=TypeScript&style=flat)](https://github.com/krypciak/cc-vim)
 
-
-
 https://github.com/krypciak/cc-vim/assets/115574014/76d5fe28-e5b3-4570-88b9-a6e4515fac60
-
 
 ## Dependencies
 1. [input-api](https://github.com/CCDirectLink/input-api)  
