@@ -32,11 +32,10 @@ export function addBaseAliases() {
             possibleArguments(): AliasArguemntEntry[] {
                 const arr: AliasArguemntEntry[] = []
                 for (const i of Object.keys(sc.savePreset.slots)) {
-                    const slot: { path: string, title: { value: string }, sub: { value: string } } = sc.savePreset.slots[parseInt(i)]
+                    const slot: sc.SavePresetData = sc.savePreset.slots[parseInt(i)]
                     const value = i.toString()
-                    const other: string[] = [ slot.title.value, slot.sub.value, slot.path ]
-                    const keys = [ value, ...other ]
-                    arr.push({ value, other, keys, display: keys})
+                    const keys = [ value, slot.title.value, slot.sub.value, slot.path ]
+                    arr.push({ value, keys, display: keys})
                 }
                 return arr
             },

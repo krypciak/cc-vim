@@ -1,31 +1,36 @@
 import VimGui from './plugin.js'
 import { addBaseAliases } from './aliases.js'
 
-export interface AliasArguemntEntry {
-    value: string
-    other: string[]
+export interface Alias {
+    origin: string /* namespace */
+    name: string   /* command name */
+    description: string
+    command: ((...args: string[]) => void)  /* command to execute */
+    condition: /* if the alias appears in the menu, updated every time the menu is shown */
+               'ingame'    /* can only be used in-game */
+             | 'global'    /* can be used anywhere */
+             | 'titlemenu' /* can only be used in the title menu */
+             | ((ingame: boolean) => boolean) /* custom function */
 
-    keys: string[]
-    display: string[]
+    arguments: AliasArguemnt[] /* see below, argument length is not enforced */
+    
+    keys: string[]    /* what do include in the fuzzy search */
+    display: string[] /* what to display */
 }
 
 export interface AliasArguemnt {
-    type: string
-    // { valie: string; desc: string }[] but in a format that fuse.js can understand
-    possibleArguments?: AliasArguemntEntry[] | (() => AliasArguemntEntry[])
+    type: string /* value type, doesnt really do anything, not enforced */
+    possibleArguments?: /* possible types, not enforced */
+                       AliasArguemntEntry[]         /* hard-coded values */
+                     | (() => AliasArguemntEntry[]) /* custom function, run every time the possible values list is shown */
     description: string
 }
 
-export interface Alias {
-    origin: string
-    name: string
-    desc: string
-    command: ((...args: string[]) => void)
-    condition: 'ingame' | 'global' | 'titlemenu' | ((ingame: boolean) => boolean)
-    arguments: AliasArguemnt[]
-    
-    keys: string[]
-    display: string[]
+export interface AliasArguemntEntry {
+    value: string   /* what will be passed to the function */
+
+    keys: string[]    /* what do include in the fuzzy search */
+    display: string[] /* what to display */
 }
 
 export interface Command {
@@ -44,14 +49,14 @@ export class VimLogic {
         addBaseAliases()
     }
 
-    addAlias(origin: string, name: string, desc: string,
+    addAlias(origin: string, name: string, description: string,
         condition: 'ingame' | 'global' | 'titlemenu' | ((ingame: boolean) => boolean),
         command: ((...args: string[]) => void), args: AliasArguemnt[] = []) {
 
         const alias: Alias = { 
-            origin, name, desc, condition, command,
-            keys: [ origin, name, desc ],
-            display: [ origin, name, desc, command.toString() ],
+            origin, name, description, condition, command,
+            keys: [ origin, name, description ],
+            display: [ origin, name, description, command.toString() ],
             arguments: args
         }
         this.aliases.push(alias)
