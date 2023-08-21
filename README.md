@@ -3,8 +3,7 @@
 ## Dependencies
 1. [input-api](https://github.com/CCDirectLink/input-api)  
 
-![Realeses](https://github.com/CCDirectLink/organization/blob/master/assets/badges/releases%402x.png)  
-
+[![Realeses](https://github.com/CCDirectLink/organization/blob/master/assets/badges/releases%402x.png)](https://github.com/krypciak/cc-vim/releases/)
 
 # For Developers
 - [Types](#types)  
