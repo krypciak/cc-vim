@@ -5,6 +5,17 @@
 ## Dependencies
 1. [input-api](https://github.com/CCDirectLink/input-api)
 
+<br>
+
+- [For Developers](#for-developers)  
+    - [Types](#types)  
+	- [Simplest alias](#simplest-alias)  
+	- [Examples with arguments](#examples-with-arguments)  
+	- [TypeScript support](#typescript-support)  
+	- [JavaScript support](#javascript-support)  
+ 	- [Contribution](#contribution)  
+	- [Building](#building)  
+
 # For Developers
 Include the mod as a hard dependency in `ccmod.json` or use:
 ```ts
@@ -46,12 +57,12 @@ interface AliasArguemntEntry {
 
 ```
 
-Simplest alias:  
+### Simplest alias:  
 ```ts
 //           namespace  command-name  description       condition function
 vim.addAlias('cc-vim', 'reload',      'Reload the game, 'global', () => { window.location.reload() })
 ```
-Examples with arguments:
+### Examples with arguments:
 ```ts
 vim.addAlias('cc-vim', 'player-move', 'Move player', 'ingame', (x?: string, y?: string, z?: string) => {
     const pos: Vec3 = ig.game.playerEntity.coll.pos
@@ -89,6 +100,9 @@ npm install --save-dev github:krypciak/cc-vim
 ```ts
 import { VimLogic, AliasArguemntEntry } from '../node_modules/cc-vim/src/logic.js'
 ```
+## JavaScript support
+you dummy learn typescript  
+the same as typescript just remove the types (thingis behind `:`)
 
 ## Contribution
 Feel free to pr any aliases you would like to see added  
