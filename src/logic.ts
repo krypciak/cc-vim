@@ -1,5 +1,5 @@
 import VimGui from './plugin.js'
-import { addBaseAliases } from './aliases.js'
+import { addAllAliases } from './aliases/all.js'
 
 export interface Alias {
     origin: string /* namespace */
@@ -46,7 +46,7 @@ export class VimLogic {
 
     constructor(public gui: VimGui) {
         Object.assign(window, {vim: this})
-        addBaseAliases()
+        addAllAliases()
     }
 
     addAlias(origin: string, name: string, description: string,

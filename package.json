@@ -13,9 +13,9 @@
         "@typescript-eslint/eslint-plugin": "^6.2.0",
         "@typescript-eslint/parser": "^6.2.0",
         "esbuild": "^0.18.15",
+        "fuse.js": "^6.6.2",
         "prettier": "3.0.0",
         "typescript": "^5.1.6",
-        "ultimate-crosscode-typedefs": "github:krypciak/ultimate-crosscode-typedefs",
-        "fuse.js": "^6.6.2"
+        "ultimate-crosscode-typedefs": "github:krypciak/ultimate-crosscode-typedefs"
     }
 }
