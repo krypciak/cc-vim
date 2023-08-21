@@ -1,61 +1,70 @@
 import VimGui from './plugin.js'
-import Fuse from 'fuse.js'
 import { addBaseAliases } from './aliases.js'
 
-interface Alias {
+export interface AliasArguemntEntry {
+    value: string
+    other: string[]
+
+    keys: string[]
+    display: string[]
+}
+
+export interface AliasArguemnt {
+    type: string
+    // { valie: string; desc: string }[] but in a format that fuse.js can understand
+    possibleArguments?: AliasArguemntEntry[] | (() => AliasArguemntEntry[])
+    description: string
+}
+
+export interface Alias {
     origin: string
     name: string
     desc: string
-    command: string | ((...args: string[]) => void)
+    command: ((...args: string[]) => void)
     condition: 'ingame' | 'global' | 'titlemenu' | ((ingame: boolean) => boolean)
+    arguments: AliasArguemnt[]
+    
     keys: string[]
+    display: string[]
+}
+
+export interface Command {
+    base: string
+    args: string[]
 }
 
 export class VimLogic {
+    static argSplit = ','
+
+    aliasesMap: Map<string, (...args: string[]) => void> = new Map()
+    aliases: Alias[] = []
+
     constructor(public gui: VimGui) {
         Object.assign(window, {vim: this})
         addBaseAliases()
     }
-    
-    fuseOptions: Fuse.IFuseOptions<Alias> = {
-        isCaseSensitive: false,
-        includeScore: true,
-        includeMatches: true,
-        minMatchCharLength: 1,
-        shouldSort: true,
-        findAllMatches: true,
-        keys: [ 'keys' ],
-        ignoreLocation: true,
-        useExtendedSearch: false,
-        ignoreFieldNorm: false,
-        threshold: 1,
-        fieldNormWeight: 1,
-    }
-    completionThreshold: number = 1
-    fuse!: Fuse<Alias>
-    suggestions!: Fuse.FuseResult<Alias>[]
-    
-    aliasesMap: Map<string, string | ((...args: string[]) => void)> = new Map()
-    aliases: Alias[] = []
 
+    addAlias(origin: string, name: string, desc: string,
+        condition: 'ingame' | 'global' | 'titlemenu' | ((ingame: boolean) => boolean),
+        command: ((...args: string[]) => void), args: AliasArguemnt[] = []) {
 
-    addAlias(origin: string, name: string, desc: string, condition: 'ingame' | 'global' | 'titlemenu' | ((ingame: boolean) => boolean), command: string | ((...args: string[]) => void)) {
-        const alias: Alias = { origin, name, desc, condition, command, keys: [ origin, name, desc ] }
+        const alias: Alias = { 
+            origin, name, desc, condition, command,
+            keys: [ origin, name, desc ],
+            display: [ origin, name, desc, command.toString() ],
+            arguments: args
+        }
         this.aliases.push(alias)
         this.aliasesMap.set(alias.name, alias.command)
     }
     
-    updateAliases(aliases: Alias[] = this.aliases, options: Fuse.IFuseOptions<Alias> = this.fuseOptions) {
-        this.fuse = new Fuse(aliases, options)
-    }
-
     getPossibleAliases(): Alias[] {
         const suggestions: Alias[] = []
         this.aliases.forEach(a => suggestions.push(a))
         // @ts-expect-error ig.game.maps not in typedefes
         const ingame: boolean = ig.game.maps.length != 0
 
-        return suggestions.filter(a => {
+        const filtered = suggestions.filter(a => {
             if (typeof a.condition == 'string') {
                 switch (a.condition) {
                     case 'global': return true
@@ -66,116 +75,100 @@ export class VimLogic {
                 return a.condition(ingame)
             }
         })
+        for (let i = 0; i < filtered.length; i++) {
+            const alias = filtered[i]
+            for (let h = 0; h < alias.arguments.length; h++) {
+                const arg: AliasArguemnt = alias.arguments[h]
+                if (arg.possibleArguments && typeof arg.possibleArguments === 'function') {
+                    alias.arguments[h] = ig.copy(arg)
+                    alias.arguments[h].possibleArguments = arg.possibleArguments()
+                }
+            }
+        }
+        return filtered
     }
 
-    private search(base: string): Fuse.FuseResult<Alias>[] {
-        const suggestions = this.suggestions = this.fuse.search(base)
-        return suggestions
-    }
-    
-    execute(cmd: string | ((...args: string[]) => void), fallback = false, funcArgs: string[] = []): boolean {
-        if (! cmd) { return false }
-        if (typeof cmd === 'function') {
-            cmd(...funcArgs)
-            return true
+    executeFunc(cmd: ((...args: string[]) => void), args: string[] = []): any | null {
+        try {
+            cmd(...args)
+            return null
+        } catch (e) {
+            return e
         }
-        const split: string[] = cmd.split(' ')
-        const baseEndIndex = cmd.indexOf(':')
-        let base: string = '', args: string[] = []
+    }
+
+    decomposeCommandString(input: string, ignoreError = false): Command {
+        const baseEndIndex = input.indexOf(':')
+        let base: string = ''
+        let args: string[] = []
+
         if (baseEndIndex == -1) {
-            if (split.length == 1) {
-                base = cmd
-            } else if (! fallback) {
-                throw new Error('invalid command')
+            if (input.trim().split(' ').length == 1) {
+                base = input
+            } else if (ignoreError) {
+                base = ''
+            } else {
+                throw new Error('cc-vim: invalid command syntax: ' + input)
             }
         } else {
-            base = cmd.substring(0, baseEndIndex)
-            args = cmd.substring(baseEndIndex+1).trim().split(' ')
-            debugger
+            base = input.substring(0, baseEndIndex)
+            args = input.substring(baseEndIndex+1).split(VimLogic.argSplit)
         }
-
-        let exec: string | ((...args: string[]) => void) | null = null
-        if (base && this.aliasesMap.has(base)) {
-            exec = this.aliasesMap.get(base)!
-        }
-        if (exec) {
-            try {
-                if (typeof exec === 'string') {
-                    (0, eval)(exec)
-                } else {
-                    exec(...args)
-                }
-                return true
-            } catch (e: any) {
-                console.log(e)
-                return false
-            }
-        } else if (fallback) {
-            const item = this.suggestions[0]
-            if (item && item.score! < this.completionThreshold) {
-                return this.execute(item.item.command, false, args)
-            }
-        }
-        throw new Error('how')
+        return { base, args }
     }
 
-    inputEvent(event: InputEvent) {
-        this.autocomplete((event.target as HTMLInputElement).value)
+    private executeJsString(input: string): boolean {
+        // has to start with !
+        const execFunction = () => { (0, eval)(input.substring(1)) }
+        const result = this.executeFunc(execFunction, [])
+        if (result) {
+            console.log(result)
+            return false
+        }
+        return true
     }
 
-    tab() {
-        this.gui.input.value = this.suggestions[0].item.name + ': '
+    executeString(input: string): boolean {
+        if (input.startsWith('!')) {
+            return this.executeJsString(input)
+        }
+
+        let execFunction: ((...args: string[]) => void)
+        let args: string[] = []
+
+        const { base, args: args1 } = this.decomposeCommandString(input)
+        args = args1
+        if (this.aliasesMap.has(base)) {
+            execFunction = this.aliasesMap.get(base)!
+        } else {
+            throw new Error('cc-vim: invalid command syntax: ' + input)
+        }
+
+        const result: any | null = this.executeFunc(execFunction, args)
+        // if an error accured
+        if (result) {
+            console.log(result)
+            return false
+        }
+
+        return true
     }
 
-    autocomplete(inputValue: string) {
-        // clear previous suggestions
-        const table: HTMLTableElement = this.gui.suggestionTable
-        table.innerHTML = ''
-        
-        inputValue = inputValue.toLowerCase()
-        const cursorPosition: number = this.gui.input.selectionStart!
-        let baseEndPos = inputValue.indexOf(':')
-        if (baseEndPos == -1) {
-            baseEndPos = inputValue.length
+    executeFromInput(input: string, fallbackSuggestion: Alias, fallbackSuggesionArgs?: AliasArguemntEntry[]) {
+        if (input.startsWith('!')) {
+            return this.executeJsString(input)
         }
-        const isBase: boolean = baseEndPos >= cursorPosition
-        const baseStr = inputValue.substring(0, baseEndPos)
-
-        let suggestions: Fuse.FuseResult<Alias>[] = this.search(baseStr)
-
-        if (! isBase && suggestions) {
-            const selectedBase = suggestions[0]
-            if (selectedBase && selectedBase.score! < this.completionThreshold) {
-                this.suggestions = suggestions = [ suggestions[0] ]
-            }
-        }
-
-        for (let i = 0; i < Math.min(5, suggestions.length); i++) {
-            const searchResult = suggestions[i]
-            const alias: Alias = searchResult.item
-
-            const tr = table.insertRow()
-            const rowData: string[] = [ alias.origin, alias.name, alias.desc, alias.command.toString() ]
-            for (const entry of rowData) {
-                const cell = tr.insertCell()
-                cell.style.paddingRight = '20px'
-                cell.style.whiteSpace = 'nowrap'
-                cell.textContent = entry
-            }
-
-            if (i == 0) {
-                const score: number = searchResult.score!
-                if (score < this.completionThreshold) {
-                    tr.style.backgroundColor = 'blue'
-                } else {
-                    tr.style.backgroundColor = ''
+        if (fallbackSuggestion) {
+            const { args } = this.decomposeCommandString(input, true)
+            if (fallbackSuggesionArgs) {
+                for (let i = 0; i < args.length; i++) {
+                    if (fallbackSuggesionArgs[i]) {
+                        args[i] = fallbackSuggesionArgs[i].value
+                    }
                 }
             }
-        
-            tr.addEventListener('click', () => {
-                  this.gui.input.value = alias.name
-                  this.gui.suggestionTable.innerHTML = ''
-            })
+
+            fallbackSuggestion.command(...args)
         }
     }
 }

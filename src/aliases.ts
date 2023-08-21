@@ -1,4 +1,5 @@
-import { VimLogic } from './logic.js'
+import { VimLogic, AliasArguemntEntry } from './logic.js'
+
 declare const vim: VimLogic
 declare const chrome: { runtime: { reload: () => void } }
 
@@ -12,15 +13,36 @@ export function addBaseAliases() {
     
     vim.addAlias('cc-vim', 'player', 'Prints player entity', 'ingame', () => { console.log(ig.copy(ig.game.playerEntity)) })
     vim.addAlias('cc-vim', 'player-pos', 'Prints player position', 'ingame', () => { console.log(ig.copy(ig.game.playerEntity.coll.pos)) })
+
     vim.addAlias('cc-vim', 'player-move', 'Move player arg0?: x, arg1?: y, arg2?: z', 'ingame', (x?: string, y?: string, z?: string) => {
         const pos: Vec3 = ig.game.playerEntity.coll.pos
         ig.game.playerEntity.setPos(pos.x + parseInt(x ?? '0'), pos.y + parseInt(y ?? '0'), pos.z + parseInt(z ?? '0'))
-    })
+    }, [
+            { type: 'number', description: 'x to add' },
+            { type: 'number', description: 'y to add' },
+            { type: 'number', description: 'z to add' },
+    ])
     
     vim.addAlias('cc-vim', 'load-preset', 'Load save preset arg0?: preset id', 'global', (presetId: string) => {
         const id = parseInt(presetId.trim())
         nukeInteractable()
         // @ts-expect-error sc.savePreset missing from typedefs
         sc.savePreset.load(id)
-    })
+    }, [{
+            type: 'number',
+            possibleArguments(): AliasArguemntEntry[] {
+                const arr: AliasArguemntEntry[] = []
+                // @ts-expect-error sc.savePreset missing from typedefs
+                for (const i of Object.keys(sc.savePreset.slots)) {
+                    // @ts-expect-error sc.savePreset missing from typedefs
+                    const slot: { path: string, title: { value: string }, sub: { value: string } } = sc.savePreset.slots[i]
+                    const value = i.toString()
+                    const other: string[] = [ slot.title.value, slot.sub.value, slot.path ]
+                    const keys = [ value, ...other ]
+                    arr.push({ value, other, keys, display: keys})
+                }
+                return arr
+            },
+            description: 'Preset to load'
+    }])
 }

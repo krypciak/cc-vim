@@ -1,5 +1,6 @@
 import { InputKey, KeyBinder } from './keybinder.js'
 import { VimLogic } from './logic.js'
+import { MainSuggestionTable } from './mainSuggestionTable.js'
 
 export default class VimGui {
     dir: string
@@ -8,8 +9,10 @@ export default class VimGui {
     block!: HTMLElement
     input!: HTMLInputElement
     suggestionTable!: HTMLTableElement
+    suggestionArgType!: HTMLTableElement
     suggestionArgTable!: HTMLTableElement
     logic: VimLogic = new VimLogic(this)
+    mst!: MainSuggestionTable
 
     constructor(mod: { baseDirectory: string }) {
         this.dir = mod.baseDirectory
@@ -55,7 +58,15 @@ export default class VimGui {
 							width: 100%;
                         ">
                         <table id="suggestionTable" style="
+                            border-collapse: collapse;
+                        "></table>
+                        <table id="suggestionArgType" style="
+                            border-collapse: collapse;
+                            left: 5%;
+                        "></table>
+                        <table id="suggestionArgTable" style="
                             border-collapse: collapse
+                            left: 5%;
                         "></table>
 					</div>
 				`)
@@ -63,9 +74,11 @@ export default class VimGui {
 				self.block = document.getElementById('vim')!
                 const input = self.input = document.getElementById('viminput') as HTMLInputElement
                 self.suggestionTable = document.getElementById('suggestionTable')! as HTMLTableElement
+                self.suggestionArgType = document.getElementById('suggestionArgType')! as HTMLTableElement
+                self.suggestionArgTable = document.getElementById('suggestionArgTable')! as HTMLTableElement
 
                 input.addEventListener('keydown', (e: KeyboardEvent) => { self.keyEvent(e) })
-                input.addEventListener('input', (e: any) => { self.logic.inputEvent(e) })
+                input.addEventListener('input', (e: any) => { self.mst.inputEvent(e, self.input.selectionStart!) })
                 self.hide()
 			}
 		});
@@ -74,14 +87,16 @@ export default class VimGui {
     keyEvent(event: KeyboardEvent) {
         if (event.key == 'Enter') {
             event.preventDefault()
-            this.logic.execute((event.target as HTMLInputElement).value.trim(), true)
+            this.logic.executeFromInput((event.target as HTMLInputElement).value.trim(),
+                this.mst.suggestions[0]?.item, this.mst.currentArgTables?.map(t => t?.suggestions[0]?.item))
             this.input.value = ''
             this.hide()
         } else if (event.key == ';' || event.key == 'Escape') {
             this.hide()
         } else if (event.key == 'Tab') {
             event.preventDefault()
-            this.logic.tab()
+        } else if (event.key == 'ArrowLeft' || event.key == 'ArrowRight') {
+            this.mst.inputEvent(event, this.input.selectionStart! + (event.key == 'ArrowLeft' ? -1 : 1))
         }
     }
 
@@ -95,8 +110,15 @@ export default class VimGui {
         this.visible = true
         this.block.style.display = 'block'
         this.input.value = ''
+        this.suggestionTable.innerHTML = ''
+        this.suggestionArgType.innerHTML = ''
+        this.suggestionArgTable.innerHTML = ''
         this.input.focus()
-        this.logic.updateAliases(this.logic.getPossibleAliases())
-        this.logic.autocomplete('')
+        if (! this.mst) {
+            this.mst = new MainSuggestionTable(this.suggestionTable, this.suggestionArgTable, this.suggestionArgType, this.logic)
+        }
+        this.mst.values = this.logic.getPossibleAliases()
+        this.mst.updateValues()
+        this.mst.autocomplete('', 0)
     }
 }
