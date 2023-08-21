@@ -45,7 +45,11 @@ export function addBaseAliases() {
     }, [ { type: 'string', description: 'Character name', possibleArguments(): AliasArguemntEntry[] {
         const arr: AliasArguemntEntry[] = []
         for (const char of Object.keys(sc.party.models)) {
-            const keys = [ char ]
+            const other: string[] = []
+            switch (char) {
+                case 'Glasses': other.push('Ctron'); other.push('Tonny'); break
+            }
+            const keys = [ char, ...other ]
             arr.push({ value: char, keys, display: keys })
         }
 
