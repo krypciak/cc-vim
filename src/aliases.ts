@@ -28,8 +28,7 @@ export function addBaseAliases() {
         nukeInteractable()
         sc.savePreset.load(id)
     }, [{
-            type: 'number',
-            possibleArguments(): AliasArguemntEntry[] {
+            type: 'number', description: 'Preset to load', possibleArguments(): AliasArguemntEntry[] {
                 const arr: AliasArguemntEntry[] = []
                 for (const i of Object.keys(sc.savePreset.slots)) {
                     const slot: sc.SavePresetData = sc.savePreset.slots[parseInt(i)]
@@ -39,6 +38,18 @@ export function addBaseAliases() {
                 }
                 return arr
             },
-            description: 'Preset to load'
+    }])
+
+    vim.addAlias('cc-vim', 'change-character', 'Change the playable character', 'ingame', (name: string) => {
+        sc.model.player.setConfig(sc.party.models[name].config)
+    }, [ { type: 'string', description: 'Character name', possibleArguments(): AliasArguemntEntry[] {
+        const arr: AliasArguemntEntry[] = []
+        for (const char of Object.keys(sc.party.models)) {
+            const keys = [ char ]
+            arr.push({ value: char, keys, display: keys })
+        }
+
+        return arr
+    },
     }])
 }
