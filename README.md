@@ -10,6 +10,7 @@ The menu is openable with `;` by default
 [![Realeses](https://github.com/CCDirectLink/organization/blob/master/assets/badges/releases%402x.png)](https://github.com/krypciak/cc-vim/releases/)
 
 # For Developers
+- [Executing from the CLI](#executing-from-the-cli)
 - [Types](#types)  
 - [Examples](#examples)
   	- [Simplest](#simplest-alias)
@@ -25,6 +26,13 @@ if (vim) {
 	... your aliases ...
 }
 ```
+## Executing from the CLI
+For example:
+```ts
+vim.executeString('title-screen')
+vim.executeString('load-preset: 0')
+```
+
 ## Types
 ```ts
 interface Alias {
