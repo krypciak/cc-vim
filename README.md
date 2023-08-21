@@ -6,7 +6,6 @@
 1. [input-api](https://github.com/CCDirectLink/input-api)
 
 # For Developers
-```
 Include the mod as a hard dependency in `ccmod.json` or use:
 ```ts
 if (vim) {
