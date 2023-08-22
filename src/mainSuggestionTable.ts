@@ -1,17 +1,28 @@
 import { VimLogic, Alias, AliasArguemnt, AliasArguemntEntry } from './logic.js'
 import { SuggestionTable } from './suggestionTable.js'
-
+const fs: {
+    writeFile(path: string, content: string, encoding: string, callback: (err: any) => void): void
+    readFileSync(path: string): string
+} = require('fs')
 
 export class MainSuggestionTable extends SuggestionTable<Alias> {
     currentArgTables!: SuggestionTable<AliasArguemntEntry>[] | null
+    fs: any
+    history!: { [ key: string ]: number }
+    historySuggestionTable!: SuggestionTable<{ keys: string[], display: string[]}>
+    historyIndex: number = 10000
 
     constructor(
+        public input: HTMLInputElement,
         public table: HTMLTableElement,
         public argTable: HTMLTableElement,
+        public historyTable: HTMLTableElement,
         public argTypeTable: HTMLTableElement,
         public logic: VimLogic,
+        public historyFile: string,
     ) {
         super(table, [])
+        this.loadHistory()
     }
 
     getArgPos(args: string[], pos: number): number {
@@ -26,12 +37,21 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
         return wordIndex
     }
 
-    autocomplete(inputValue: string, cursorPosition: number) {
+    autocomplete(inputValue: string, cursorPosition: number, noSearch: boolean = false, noHistorySearch = false) {
+        this.historySuggestionTable.autocomplete(inputValue, cursorPosition, noHistorySearch)
+
+        if (inputValue.startsWith('!')) {
+            this.table.innerHTML = ''
+            this.argTypeTable.innerHTML = ''
+            this.argTable.innerHTML = ''
+            return
+        }
+
         let baseEndIndex = inputValue.indexOf(':') 
         if (baseEndIndex == -1) { baseEndIndex = inputValue.length + 1 }
 
         const base = inputValue.substring(0, baseEndIndex)
-        super.autocomplete(base, cursorPosition)
+        super.autocomplete(base, cursorPosition, noSearch)
 
         const isBase = cursorPosition <= baseEndIndex
         if (this.suggestions.length > 0) {
@@ -43,6 +63,9 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
                 cursorPosition--
                 const argPos = this.getArgPos(args, cursorPosition - baseEndIndex)
                 const alias: Alias = this.suggestions[0].item
+
+                this.argTypeTable.innerHTML = ''
+                this.argTable.innerHTML = ''
                 if (alias.arguments.length > argPos) {
                     const arg: AliasArguemnt = alias.arguments[argPos]
 
@@ -62,9 +85,6 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
                         this.currentArgTables[argPos] = new SuggestionTable<AliasArguemntEntry>(this.argTable, arg.possibleArguments)
                     }
                     this.currentArgTables[argPos]?.autocomplete(args[argPos], 0)
-                } else {
-                    this.argTypeTable.innerHTML = ''
-                    this.argTable.innerHTML = ''
                 }
             } else {
                 this.argTypeTable.innerHTML = ''
@@ -74,11 +94,64 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
         }
     }
 
-    inputEvent(event: { target: EventTarget | null }, cursorPosition: number) {
-        const input = (event.target as HTMLInputElement)
-        this.autocomplete(input.value, cursorPosition)
+    inputEvent(input: string, cursorPosition: number) {
+        this.autocomplete(input, cursorPosition)
     }
  
+    updateHistoryTable() {
+        const entries: { keys: string[], display: string[]}[] = Object.entries(this.history).sort((e1, e2) => e2[1] - e1[1]).map(e => {
+            const cmd: string = e[0]
+            // const timesUsed: number = e[1]
+            return { keys: [ cmd ], display: [ cmd ] }
+        })
+        this.historySuggestionTable = new SuggestionTable(this.historyTable, entries, 0.5, 1, 5)
+
+        this.historySuggestionTable.selectedSuggestion = 10000
+    }
+
+    arrowInputEvent(input: string, cursorPosition: number, dir: -1 | 1) {
+        let val = this.historySuggestionTable.selectedSuggestion
+        val += dir
+        const len = (this.historySuggestionTable.suggestions.length == 0
+            ? this.historySuggestionTable.values.length
+            : this.historySuggestionTable.suggestions.length)
+
+        if (val < 0) {
+            val = len - 1
+        } else if (val >= len) {
+            val = 0
+        }
+        this.historySuggestionTable.selectedSuggestion = val
+        this.historySuggestionTable.autocomplete(input, cursorPosition, true)
+        this.input.value = input = this.historySuggestionTable.getSelectedSuggestion().item.display[0]
+        this.autocomplete(input, cursorPosition, false, true)
+    }
+
+    enter(input: string) {
+        if (input in this.history) {
+            this.history[input]++
+        } else if (input.trim() != '') {
+            this.history[input] = 1
+        }
+        this.saveHistory()
+    }
+
+    saveHistory() {
+        fs.writeFile(this.historyFile, JSON.stringify(this.history), 'utf8', (err) => {
+            if (err) {
+                console.error(err)
+            }
+        })
+    }
+
+    loadHistory() {
+        try {
+            this.history = JSON.parse(fs.readFileSync(this.historyFile))
+        } catch (e) {
+            this.history = {}
+        }
+        this.updateHistoryTable()
+    }
 }
 
 
