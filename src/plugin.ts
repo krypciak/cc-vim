@@ -27,7 +27,7 @@ export default class VimGui {
         this.addInjects()
     }
 
-    async main() {
+    async poststart() {
         const kb = this.keybinder
         kb.addHeader('vim', 'vim')
         kb.updateLabels()
