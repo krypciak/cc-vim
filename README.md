@@ -3,6 +3,7 @@
 https://github.com/krypciak/cc-vim/assets/115574014/76d5fe28-e5b3-4570-88b9-a6e4515fac60
 
 The menu is openable with `;` by default  
+See [alias list](ALIASES.md)
 
 ## Dependencies
 1. [input-api](https://github.com/CCDirectLink/input-api)  
