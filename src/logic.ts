@@ -149,7 +149,7 @@ export class VimLogic {
             throw new Error('cc-vim: invalid command syntax: ' + input)
         }
 
-        const result: any | null = this.executeFunc(execFunction, args)
+        const result: any | null = this.executeFunc(execFunction, args.map(str => str.trim()))
         // if an error accured
         if (result) {
             console.log(result)
@@ -173,7 +173,7 @@ export class VimLogic {
                 }
             }
 
-            fallbackSuggestion.command(...args)
+            fallbackSuggestion.command(...args.map(str => str.trim()))
         }
     }
 }
