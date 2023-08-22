@@ -6,8 +6,8 @@
         "start": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --outfile=plugin.js src/plugin.ts",
         "watch": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --watch --outfile=plugin.js src/plugin.ts"
     },
-    "author": "",
-    "license": "MIT",
+    "author": "krypek",
+    "license": "GNU GPLv3",
     "devDependencies": {
         "@types/node": "^20.4.4",
         "@typescript-eslint/eslint-plugin": "^6.2.0",
