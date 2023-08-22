@@ -8,6 +8,7 @@ export default class VimGui {
     keybinder: KeyBinder = new KeyBinder()
     visible: boolean = false
     block!: HTMLElement
+    historyBlock!: HTMLElement
     input!: HTMLInputElement
     historyTable!: HTMLTableElement
     suggestionTable!: HTMLTableElement
@@ -50,8 +51,8 @@ export default class VimGui {
 							display: none;
 							position: absolute;
 							top: 43%;
-                            left: 0.5%;
-							width: 9.5%;
+                            left: 1%;
+							width: 9%;
 							background: rgba(0, 0, 0, 1);
 							color: white;
                             font-size: 150%;
@@ -67,7 +68,7 @@ export default class VimGui {
 							position: absolute;
 							top: 40%;
                             left: 10%;
-							width: 90%;
+							width: 89%;
 							background: rgba(0, 0, 0, 1);
 							color: white;
                             font-size: 150%;
@@ -92,6 +93,7 @@ export default class VimGui {
 					</div>
 				`)
 
+                self.historyBlock = document.getElementById('vimHistory')!
 				self.block = document.getElementById('vim')!
                 const input = self.input = document.getElementById('viminput') as HTMLInputElement
                 self.historyTable = document.getElementById('historyTable') as HTMLTableElement
@@ -135,12 +137,14 @@ export default class VimGui {
     hide() {
         this.visible = false
         this.block.style.display = 'none'
+        this.historyBlock.style.display = 'none'
         document.getElementById('game')!.focus()
     }
 
     show() {
         this.visible = true
         this.block.style.display = 'block'
+        this.historyBlock.style.display = 'block'
         this.input.value = ''
         this.suggestionTable.innerHTML = ''
         this.suggestionArgType.innerHTML = ''
