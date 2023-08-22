@@ -54,8 +54,11 @@ export class SuggestionTable<T extends { keys: string[], display: string[] }> {
         if (cursorPosition) {}
 
         let suggestions: Fuse.FuseResult<T>[] = this.suggestions = this.search(inputStr)
+        if (this.suggestions.length == 0 && inputStr.trim() == '') {
+            suggestions = this.values.map(v => ({ score: 1, item: v, matches: undefined, refIndex: 0 } as Fuse.FuseResult<T>))
+        }
 
-        for (let i = 0; i < Math.min(5, suggestions.length); i++) {
+        for (let i = 0; i < Math.min(20, suggestions.length); i++) {
             const searchResult = suggestions[i]
             const value: T = searchResult.item
 
