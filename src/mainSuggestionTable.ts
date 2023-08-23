@@ -84,7 +84,7 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
                     if (arg.possibleArguments && typeof arg.possibleArguments !== 'function') {
                         this.currentArgTables[argPos] = new SuggestionTable<AliasArguemntEntry>(this.argTable, arg.possibleArguments)
                     }
-                    this.currentArgTables[argPos]?.autocomplete(args[argPos], 0)
+                    this.currentArgTables[argPos]?.autocomplete(args[argPos] ?? '', 0)
                 }
             } else {
                 this.argTypeTable.innerHTML = ''
@@ -104,7 +104,7 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
             // const timesUsed: number = e[1]
             return { keys: [ cmd ], display: [ cmd ] }
         })
-        this.historySuggestionTable = new SuggestionTable(this.historyTable, entries, 0.5, 1, 5)
+        this.historySuggestionTable = new SuggestionTable(this.historyTable, entries, 0.5, 1, 1000, false)
 
         this.historySuggestionTable.selectedSuggestion = 10000
     }

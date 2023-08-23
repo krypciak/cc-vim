@@ -37,6 +37,7 @@ export class SuggestionTable<T extends { keys: string[], display: string[] }> {
     }
 
     search(base: string): Fuse.FuseResult<T>[] {
+        if (! base) { return [] }
         return this.suggestions = this.fuse.search(base)
     }
 
