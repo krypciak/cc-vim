@@ -1,3 +1,4 @@
+// @ts-ignore when you import this from a different ts project, it complains that fuse.js is missing
 import Fuse from 'fuse.js'
 
 export class SuggestionTable<T extends { keys: string[], display: string[] }> {
