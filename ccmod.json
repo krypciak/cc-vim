@@ -19,6 +19,7 @@
 		"ja_JP": "Adds a popup command prompt",
 		"ko_KR": "Adds a popup command prompt"
 	},
+    "homepage": "https://github.com/krypciak/cc-vim",
 	"icons": {
 		"24": "icon.png"
 	},
