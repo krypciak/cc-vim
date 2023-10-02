@@ -45,7 +45,7 @@ export class VimLogic {
     aliases: Alias[] = []
 
     constructor(public gui: VimGui) {
-        Object.assign(window, {vim: this})
+        window.vim = this
         addAllAliases()
     }
 
