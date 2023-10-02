@@ -110,8 +110,15 @@ vim.addAlias('cc-vim', 'load-preset', 'Load save preset', 'global', (presetId: s
 ```bash
 npm install --save-dev github:krypciak/cc-vim
 ```
-```ts
-import { VimLogic, AliasArguemntEntry } from '../node_modules/cc-vim/src/logic.js'
+`tsconfig.json`:
+```json
+{
+   "include": [
+        "src",
+        "node_modules/ultimate-crosscode-typedefs/crosscode-ccloader-all.d.ts",
+        "node_modules/cc-vim/src/global.d.ts",
+    ],
+    ...
 ```
 ## JavaScript support
 you dummy learn typescript  
