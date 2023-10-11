@@ -9,6 +9,7 @@
 ## Game
 `cc-vim reload` - `Realod the game without closing the window`  
 `cc-vim reloadnl` - `Reload the game without memory leaks (closes the window)`  
+`cc-vim option NAME VALUE` - `Set global option (settings menu)`
 
 ## Player
 `cc-vim player` - `Prints out ig.game.playerEntity`  
