@@ -118,4 +118,9 @@ export function addGame() {
             }
         }
     ])
+
+    vim.addAlias('cc-vim', 'reset-map-vars', 'Reset all map variables in the current map', 'ingame', () => {
+        const path = ig.game.mapName.toCamel().toPath("", "")
+        ig.vars.storage.map = ig.vars.storage.maps[path] = {}
+    })
 }

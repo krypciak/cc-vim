@@ -10,6 +10,7 @@
 `cc-vim reload` - `Realod the game without closing the window`  
 `cc-vim reloadnl` - `Reload the game without memory leaks (closes the window)`  
 `cc-vim option NAME VALUE` - `Set global option (settings menu)`
+`cc-vim reset-map-vars` - `Reset the variables in the current map`
 
 ## Player
 `cc-vim player` - `Prints out ig.game.playerEntity`  
