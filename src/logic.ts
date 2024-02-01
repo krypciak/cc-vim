@@ -3,33 +3,32 @@ import { addAllAliases } from './aliases/all.js'
 
 export interface Alias {
     origin: string /* namespace */
-    name: string   /* command name */
+    name: string /* command name */
     description: string
-    command: ((...args: string[]) => void)  /* command to execute */
+    command: (...args: string[]) => void /* command to execute */
     condition: /* if the alias appears in the menu, updated every time the menu is shown */
-               'ingame'    /* can only be used in-game */
-             | 'global'    /* can be used anywhere */
-             | 'titlemenu' /* can only be used in the title menu */
-             | ((ingame: boolean) => boolean) /* custom function */
+    | 'ingame' /* can only be used in-game */
+        | 'global' /* can be used anywhere */
+        | 'titlemenu' /* can only be used in the title menu */
+        | ((ingame: boolean) => boolean) /* custom function */
 
     arguments: AliasArguemnt[] /* see below, argument length is not enforced */
-    
-    keys: string[]    /* what do include in the fuzzy search */
+
+    keys: string[] /* what do include in the fuzzy search */
     display: string[] /* what to display */
 }
 
 export interface AliasArguemnt {
     type: string /* value type, doesnt really do anything, not enforced */
     possibleArguments?: /* possible types, not enforced */
-                       AliasArguemntEntry[]         /* hard-coded values */
-                     | (() => AliasArguemntEntry[]) /* custom function, run every time the possible values list is shown */
+    AliasArguemntEntry[] /* hard-coded values */ | (() => AliasArguemntEntry[]) /* custom function, run every time the possible values list is shown */
     description: string
 }
 
 export interface AliasArguemntEntry {
-    value: string   /* what will be passed to the function */
+    value: string /* what will be passed to the function */
 
-    keys: string[]    /* what do include in the fuzzy search */
+    keys: string[] /* what do include in the fuzzy search */
     display: string[] /* what to display */
 }
 
@@ -49,20 +48,28 @@ export class VimLogic {
         addAllAliases()
     }
 
-    addAlias(origin: string, name: string, description: string,
+    addAlias(
+        origin: string,
+        name: string,
+        description: string,
         condition: 'ingame' | 'global' | 'titlemenu' | ((ingame: boolean) => boolean),
-        command: ((...args: string[]) => void), args: AliasArguemnt[] = []) {
-
-        const alias: Alias = { 
-            origin, name, description, condition, command,
-            keys: [ origin, name, description ],
-            display: [ origin, name, description, command.toString() ],
-            arguments: args
+        command: (...args: string[]) => void,
+        args: AliasArguemnt[] = []
+    ) {
+        const alias: Alias = {
+            origin,
+            name,
+            description,
+            condition,
+            command,
+            keys: [origin, name, description],
+            display: [origin, name, description, command.toString()],
+            arguments: args,
         }
         this.aliases.push(alias)
         this.aliasesMap.set(alias.name, alias.command)
     }
-    
+
     getPossibleAliases(): Alias[] {
         const suggestions: Alias[] = []
         this.aliases.forEach(a => suggestions.push(a))
@@ -72,9 +79,12 @@ export class VimLogic {
         const filtered = suggestions.filter(a => {
             if (typeof a.condition == 'string') {
                 switch (a.condition) {
-                    case 'global': return true
-                    case 'ingame': return ingame
-                    case 'titlemenu': return ! ingame
+                    case 'global':
+                        return true
+                    case 'ingame':
+                        return ingame
+                    case 'titlemenu':
+                        return !ingame
                 }
             } else {
                 return a.condition(ingame)
@@ -93,7 +103,7 @@ export class VimLogic {
         return filtered
     }
 
-    executeFunc(cmd: ((...args: string[]) => void), args: string[] = []): any | null {
+    executeFunc(cmd: (...args: string[]) => void, args: string[] = []): any | null {
         try {
             cmd(...args)
             return null
@@ -117,14 +127,16 @@ export class VimLogic {
             }
         } else {
             base = input.substring(0, baseEndIndex)
-            args = input.substring(baseEndIndex+1).split(VimLogic.argSplit)
+            args = input.substring(baseEndIndex + 1).split(VimLogic.argSplit)
         }
         return { base, args }
     }
 
     private executeJsString(input: string): boolean {
         // has to start with !
-        const execFunction = () => { (0, eval)(input.substring(1)) }
+        const execFunction = () => {
+            ;(0, eval)(input.substring(1))
+        }
         const result = this.executeFunc(execFunction, [])
         if (result) {
             console.log(result)
@@ -138,7 +150,7 @@ export class VimLogic {
             return this.executeJsString(input)
         }
 
-        let execFunction: ((...args: string[]) => void)
+        let execFunction: (...args: string[]) => void
         let args: string[] = []
 
         const { base, args: args1 } = this.decomposeCommandString(input)
@@ -149,7 +161,10 @@ export class VimLogic {
             throw new Error('cc-vim: invalid command syntax: ' + input)
         }
 
-        const result: any | null = this.executeFunc(execFunction, args.map(str => str.trim()))
+        const result: any | null = this.executeFunc(
+            execFunction,
+            args.map(str => str.trim())
+        )
         // if an error accured
         if (result) {
             console.log(result)

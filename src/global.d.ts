@@ -1,4 +1,4 @@
-import { VimLogic } from "./logic"
+import { VimLogic } from './logic'
 
 export {}
 

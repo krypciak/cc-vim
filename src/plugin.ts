@@ -1,7 +1,7 @@
 import { InputKey, KeyBinder } from './keybinder.js'
 import { VimLogic } from './logic.js'
 import { MainSuggestionTable } from './mainSuggestionTable.js'
-const fs: { existsSync(path: string): boolean, mkdirSync(path: string): void } = require('fs')
+const fs: { existsSync(path: string): boolean; mkdirSync(path: string): void } = require('fs')
 
 export default class VimGui {
     dir: string
@@ -23,14 +23,31 @@ export default class VimGui {
 
     async prestart() {
         const kb = this.keybinder
-        kb.addKey(new InputKey(
-            ig.KEY.SEMICOLON, 'openvim', 'Open vim command prompt', sc.OPTION_CATEGORY.CONTROLS, true, 'vim', () => { this.show() }, this, true))
+        kb.addKey(
+            new InputKey(
+                ig.KEY.SEMICOLON,
+                'openvim',
+                'Open vim command prompt',
+                sc.OPTION_CATEGORY.CONTROLS,
+                true,
+                'vim',
+                () => {
+                    this.show()
+                },
+                this,
+                true
+            )
+        )
         kb.bind()
 
         this.addInjects()
 
-        if (! fs.existsSync('assets/mod-data')) { fs.mkdirSync('assets/mod-data') }
-        if (! fs.existsSync('assets/mod-data/cc-vim')) { fs.mkdirSync('assets/mod-data/cc-vim') }
+        if (!fs.existsSync('assets/mod-data')) {
+            fs.mkdirSync('assets/mod-data')
+        }
+        if (!fs.existsSync('assets/mod-data/cc-vim')) {
+            fs.mkdirSync('assets/mod-data/cc-vim')
+        }
     }
 
     async poststart() {
@@ -42,10 +59,12 @@ export default class VimGui {
     addInjects() {
         const self = this
         ig.Gui.inject({
-			init(...args) {
-				this.parent(...args);
-				
-				document.body.insertAdjacentHTML('beforeend',`
+            init(...args) {
+                this.parent(...args)
+
+                document.body.insertAdjacentHTML(
+                    'beforeend',
+                    `
                     <div id="vimHistory"
 						style="
 							display: none;
@@ -91,21 +110,26 @@ export default class VimGui {
                             left: 5%;
                         "></table>
 					</div>
-				`)
+				`
+                )
 
                 self.historyBlock = document.getElementById('vimHistory')!
-				self.block = document.getElementById('vim')!
-                const input = self.input = document.getElementById('viminput') as HTMLInputElement
+                self.block = document.getElementById('vim')!
+                const input = (self.input = document.getElementById('viminput') as HTMLInputElement)
                 self.historyTable = document.getElementById('historyTable') as HTMLTableElement
                 self.suggestionTable = document.getElementById('suggestionTable') as HTMLTableElement
                 self.suggestionArgType = document.getElementById('suggestionArgType') as HTMLTableElement
                 self.suggestionArgTable = document.getElementById('suggestionArgTable') as HTMLTableElement
 
-                input.addEventListener('keydown', (e: KeyboardEvent) => { self.keyEvent(e) })
-                input.addEventListener('input', (e: any) => { self.mst.inputEvent(e.target.value, self.input.selectionStart!) })
+                input.addEventListener('keydown', (e: KeyboardEvent) => {
+                    self.keyEvent(e)
+                })
+                input.addEventListener('input', (e: any) => {
+                    self.mst.inputEvent(e.target.value, self.input.selectionStart!)
+                })
                 self.hide()
-			}
-		});
+            },
+        })
     }
 
     keyEvent(event: KeyboardEvent) {
@@ -114,8 +138,7 @@ export default class VimGui {
             event.preventDefault()
             const cmd = target.value.trim()
             this.mst.enter(cmd)
-            this.logic.executeFromInput(cmd,
-                this.mst.suggestions[0]?.item, this.mst.currentArgTables?.map(t => t?.suggestions[0]?.item))
+            this.logic.executeFromInput(cmd, this.mst.suggestions[0]?.item, this.mst.currentArgTables?.map(t => t?.suggestions[0]?.item))
             this.input.value = ''
             this.hide()
         } else if (event.key == ';' || event.key == 'Escape') {
@@ -131,7 +154,6 @@ export default class VimGui {
         } else {
             this.mst.historySuggestionTable.selectedSuggestion = -1
         }
-
     }
 
     hide() {
@@ -150,9 +172,16 @@ export default class VimGui {
         this.suggestionArgType.innerHTML = ''
         this.suggestionArgTable.innerHTML = ''
         this.input.focus()
-        if (! this.mst) {
-            this.mst = new MainSuggestionTable(this.input, this.suggestionTable, this.suggestionArgTable,
-                this.historyTable, this.suggestionArgType, this.logic, 'assets/mod-data/cc-vim/history.json')
+        if (!this.mst) {
+            this.mst = new MainSuggestionTable(
+                this.input,
+                this.suggestionTable,
+                this.suggestionArgTable,
+                this.historyTable,
+                this.suggestionArgType,
+                this.logic,
+                'assets/mod-data/cc-vim/history.json'
+            )
         }
         this.mst.values = this.logic.getPossibleAliases()
         this.mst.updateValues()

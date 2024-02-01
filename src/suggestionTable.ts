@@ -1,7 +1,7 @@
 // @ts-ignore when you import this from a different ts project, it complains that fuse.js is missing
 import Fuse from 'fuse.js'
 
-export class SuggestionTable<T extends { keys: string[], display: string[] }> {
+export class SuggestionTable<T extends { keys: string[]; display: string[] }> {
     fuse!: Fuse<T>
     fuseOptions: Fuse.IFuseOptions<T> = {
         isCaseSensitive: false,
@@ -9,7 +9,7 @@ export class SuggestionTable<T extends { keys: string[], display: string[] }> {
         minMatchCharLength: 1,
         shouldSort: true,
         findAllMatches: true,
-        keys: [ 'keys' ],
+        keys: ['keys'],
         ignoreLocation: true,
         useExtendedSearch: false,
         ignoreFieldNorm: false,
@@ -25,7 +25,7 @@ export class SuggestionTable<T extends { keys: string[], display: string[] }> {
         threshold: number = 1,
         completionThreshold: number = 1,
         public maxResults: number = 20,
-        includeMatches: boolean = true,
+        includeMatches: boolean = true
     ) {
         this.updateValues()
         this.fuseOptions.threshold = threshold
@@ -38,8 +38,10 @@ export class SuggestionTable<T extends { keys: string[], display: string[] }> {
     }
 
     search(base: string): Fuse.FuseResult<T>[] {
-        if (! base) { return [] }
-        return this.suggestions = this.fuse.search(base)
+        if (!base) {
+            return []
+        }
+        return (this.suggestions = this.fuse.search(base))
     }
 
     getSelectedSuggestion(): Fuse.FuseResult<T> {
@@ -55,7 +57,8 @@ export class SuggestionTable<T extends { keys: string[], display: string[] }> {
         table.innerHTML = ''
 
         // silence the not used info
-        if (cursorPosition) {}
+        if (cursorPosition) {
+        }
 
         let suggestions: Fuse.FuseResult<T>[]
         if (noSearch) {
@@ -63,7 +66,7 @@ export class SuggestionTable<T extends { keys: string[], display: string[] }> {
         } else {
             suggestions = this.suggestions = this.search(inputStr)
             if (this.suggestions.length == 0 && inputStr.trim() == '') {
-                suggestions = this.suggestions = this.values.map(v => ({ score: 1, item: v, matches: undefined, refIndex: 0 } as Fuse.FuseResult<T>))
+                suggestions = this.suggestions = this.values.map(v => ({ score: 1, item: v, matches: undefined, refIndex: 0 }) as Fuse.FuseResult<T>)
             }
         }
 

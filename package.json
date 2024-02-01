@@ -4,7 +4,8 @@
     "description": "Adds a popup command prompt",
     "scripts": {
         "start": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --outfile=plugin.js src/plugin.ts",
-        "watch": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --watch --outfile=plugin.js src/plugin.ts"
+        "watch": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --watch --outfile=plugin.js src/plugin.ts",
+        "format": "prettier ./src -w"
     },
     "author": "krypek",
     "license": "GNU GPLv3",
