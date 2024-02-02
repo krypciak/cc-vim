@@ -21,7 +21,7 @@
 	},
     "homepage": "https://github.com/krypciak/cc-vim",
 	"icons": {
-		"24": "icon.png"
+		"24": "icon/icon.png"
 	},
 	"plugin": "plugin.js",
 	"dependencies": {
