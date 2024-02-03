@@ -1,7 +1,9 @@
 import { InputKey, KeyBinder } from './keybinder.js'
 import { VimLogic } from './logic.js'
 import { MainSuggestionTable } from './mainSuggestionTable.js'
-const fs: { existsSync(path: string): boolean; mkdirSync(path: string): void } = require('fs')
+import {addWidgets} from './widgets.js'
+
+const fs: typeof import('fs') = (0, eval)("require('fs')")
 
 export default class VimGui {
     dir: string
@@ -48,6 +50,8 @@ export default class VimGui {
         if (!fs.existsSync('assets/mod-data/cc-vim')) {
             fs.mkdirSync('assets/mod-data/cc-vim')
         }
+
+        addWidgets()
     }
 
     async poststart() {

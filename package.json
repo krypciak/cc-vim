@@ -20,5 +20,8 @@
         "prettier": "3.0.0",
         "typescript": "^5.1.6",
         "ultimate-crosscode-typedefs": "github:krypciak/ultimate-crosscode-typedefs"
+    },
+    "dependencies": {
+        "cc-quick-menu-ext": "github:krypciak/cc-quick-menu-ext"
     }
 }
