@@ -1,7 +1,7 @@
 import { InputKey, KeyBinder } from './keybinder.js'
 import { VimLogic } from './logic.js'
 import { MainSuggestionTable } from './mainSuggestionTable.js'
-import {addWidgets} from './widgets.js'
+import { addWidgets } from './widgets.js'
 
 const fs: typeof import('fs') = (0, eval)("require('fs')")
 
