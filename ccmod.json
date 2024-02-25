@@ -4,7 +4,7 @@
     "title": "Vim Command Mode",
     "description": "Adds a popup command prompt",
     "repository": "https://github.com/krypciak/cc-vim",
-    "tags": ["dev"],
+    "tags": ["dev", "widget"],
     "authors": "krypek",
     "icons": {
         "24": "icon/icon.png"
