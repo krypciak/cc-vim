@@ -2,7 +2,7 @@ import 'nax-ccuilib/src/headers/nax/quick-menu-public-api.d.ts'
 
 export function addWidgets() {
     /* optional dependency on https://github.com/conorlawton/nax-ccuilib */
-    if (nax.ccuilib.QuickRingMenuWidgets) {
+    if (nax?.ccuilib?.QuickRingMenuWidgets) {
         nax.ccuilib.QuickRingMenuWidgets.addWidget({
             name: 'dev_reload',
             title: 'Game reload',
