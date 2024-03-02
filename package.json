@@ -1,6 +1,6 @@
 {
     "name": "cc-vim",
-    "version": "1.5.8",
+    "version": "1.5.9",
     "description": "Adds a popup command prompt",
     "scripts": {
         "start": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --outfile=plugin.js src/plugin.ts",

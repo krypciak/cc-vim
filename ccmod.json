@@ -1,6 +1,6 @@
 {
     "id": "cc-vim",
-    "version": "1.5.8",
+    "version": "1.5.9",
     "title": "Vim Command Mode",
     "description": "Adds a popup command prompt",
     "repository": "https://github.com/krypciak/cc-vim",
