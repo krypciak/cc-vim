@@ -158,8 +158,8 @@ Feel free to pr any aliases you would like to see added
 ```bash
 git clone https://github.com/krypciak/cc-vim
 cd cc-vim
-npm install
-npm run start
+pnpm install
+pnpm run start
 # this should return no errors or very few
 npx tsc
 ```
