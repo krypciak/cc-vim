@@ -1,6 +1,5 @@
-import { VimLogic, AliasArguemntEntry } from '../logic.js'
+import { AliasArguemntEntry } from '../logic.js'
 
-declare const vim: VimLogic
 declare const chrome: { runtime: { reload: () => void } }
 
 declare global {

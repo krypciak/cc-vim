@@ -1,7 +1,5 @@
 import { VimLogic, AliasArguemntEntry } from '../logic.js'
 
-declare const vim: VimLogic
-
 export function addEntity() {
     vim.addAlias(
         'cc-vim',

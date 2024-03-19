@@ -4,7 +4,7 @@ export {}
 
 declare global {
     const vim: VimLogic
-    export interface Window {
+    interface Window {
         vim: VimLogic
     }
 }
