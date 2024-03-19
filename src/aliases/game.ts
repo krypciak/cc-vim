@@ -26,29 +26,6 @@ function gotoTitle() {
     sc.model.enterTitle()
 }
 
-async function getMapObject(mapName: string): Promise<sc.MapModel.Map> {
-    mapName = mapName.replace(/\./g, '/')
-    const path: string = ig.getFilePath(mapName.toPath(ig.root + 'data/maps/', '.json') + ig.getCacheSuffix())
-    const mapString: string = await getMapStringByPath(path)
-    return JSON.parse(mapString)
-}
-function getMapStringByPath(path: string): Promise<string> {
-    path = path.replace('assets/', '')
-    return new Promise(resolve => {
-        $.ajax({
-            url: path,
-            dataType: 'text',
-            success: function (response: string) {
-                resolve(response)
-            },
-            error: function (b, c, e) {
-                console.log(path)
-                ig.system.error(Error("Loading of Map '" + path + "' failed: " + b + ' / ' + c + ' / ' + e))
-            },
-        })
-    })
-}
-
 export function addGame() {
     vim.addAlias('cc-vim', 'reload', 'Reload the game without closing the window', 'global', () => {
         window.location.reload()
@@ -58,9 +35,13 @@ export function addGame() {
     })
 
     vim.addAlias('cc-vim', 'reload-level', 'Reload the map', 'ingame', async () => {
-        let pos = Vec3.create(ig.game.playerEntity.coll.pos)
-        ig.game.loadLevel(await getMapObject(ig.game.mapName), false, false)
-        ig.game.playerEntity.setPos(pos.x, pos.y, pos.z)
+        const tppos = new ig.TeleportPosition()
+        tppos.pos = Vec3.create(ig.game.playerEntity.coll.pos)
+        tppos.baseZPos = tppos.pos.y
+        tppos.level = ig.game.playerEntity.coll.level as unknown as number
+        tppos.face = Vec2.create(ig.game.playerEntity.face)
+        ig.game.teleport(ig.game.mapName, tppos)
+        ig.game.teleporting.timer = 0
     })
 
     vim.addAlias(
