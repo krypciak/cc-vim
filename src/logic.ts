@@ -73,7 +73,6 @@ export class VimLogic {
     getPossibleAliases(): Alias[] {
         const suggestions: Alias[] = []
         this.aliases.forEach(a => suggestions.push(a))
-        // @ts-expect-error ig.game.maps not in typedefes
         const ingame: boolean = ig.game.maps.length != 0
 
         const filtered = suggestions.filter(a => {
