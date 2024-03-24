@@ -35,8 +35,10 @@ export function addGame() {
 
     vim.addAlias('cc-vim', 'reload-level', 'Reload the map', 'ingame', async () => {
         const tppos = new ig.TeleportPosition()
-        tppos.pos = Vec3.create(ig.game.playerEntity.coll.pos)
-        tppos.baseZPos = tppos.pos.y
+        const { x, y } = ig.game.playerEntity.getCenter()
+        const z = ig.game.playerEntity.coll.pos.z
+        tppos.pos = Vec3.createC(x, y, z)
+        tppos.baseZPos = z
         tppos.level = ig.game.playerEntity.coll.level as unknown as number
         tppos.face = Vec2.create(ig.game.playerEntity.face)
         ig.game.teleport(ig.game.mapName, tppos)
