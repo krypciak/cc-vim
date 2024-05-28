@@ -1,9 +1,11 @@
 import 'nax-ccuilib/src/headers/nax/quick-menu-public-api.d.ts'
 
 export function addWidgets() {
+    // @ts-ignore
+    const ccuilib = window.nax?.ccuilib
     /* optional dependency on https://github.com/conorlawton/nax-ccuilib */
-    if (window.nax?.ccuilib?.QuickRingMenuWidgets) {
-        nax.ccuilib.QuickRingMenuWidgets.addWidget({
+    if (ccuilib.QuickRingMenuWidgets) {
+        ccuilib.QuickRingMenuWidgets.addWidget({
             name: 'dev_reload',
             title: 'Game reload',
             description: 'Reload the game',
@@ -15,7 +17,7 @@ export function addWidgets() {
                 size: { x: 16, y: 16 },
             }),
         })
-        nax.ccuilib.QuickRingMenuWidgets.addWidget({
+        ccuilib.QuickRingMenuWidgets.addWidget({
             name: 'dev_mapReload',
             title: 'Map reload',
             description: 'Reload the map',
