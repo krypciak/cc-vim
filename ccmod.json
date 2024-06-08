@@ -10,7 +10,8 @@
         "24": "icon/icon.png"
     },
     "dependencies": {
-        "input-api": ">=1.0.0"
+        "input-api": ">=1.0.0",
+        "ccmodmanager": ">=0.9.12"
     },
     "plugin": "plugin.js"
 }

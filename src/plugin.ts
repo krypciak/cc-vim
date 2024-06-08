@@ -1,13 +1,12 @@
-import { InputKey, KeyBinder } from './keybinder.js'
 import { VimLogic } from './logic.js'
 import { MainSuggestionTable } from './mainSuggestionTable.js'
+import { registerOpts } from './options.js'
 import { addWidgets } from './widgets.js'
 
 const fs: typeof import('fs') = (0, eval)("require('fs')")
 
 export default class VimGui {
     dir: string
-    keybinder: KeyBinder = new KeyBinder()
     visible: boolean = false
     block!: HTMLElement
     historyBlock!: HTMLElement
@@ -24,24 +23,7 @@ export default class VimGui {
     }
 
     async prestart() {
-        const kb = this.keybinder
-        kb.addKey(
-            new InputKey(
-                ig.KEY.SEMICOLON,
-                'openvim',
-                'Open vim command prompt',
-                sc.OPTION_CATEGORY.CONTROLS,
-                true,
-                'vim',
-                () => {
-                    this.show()
-                },
-                this,
-                true
-            )
-        )
-        kb.bind()
-
+        registerOpts()
         this.addInjects()
 
         if (!fs.existsSync('assets/mod-data')) {
@@ -52,12 +34,6 @@ export default class VimGui {
         }
 
         addWidgets()
-    }
-
-    async poststart() {
-        const kb = this.keybinder
-        kb.addHeader('vim', 'vim')
-        kb.updateLabels()
     }
 
     addInjects() {
