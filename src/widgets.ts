@@ -4,7 +4,7 @@ export function addWidgets() {
     // @ts-ignore
     const ccuilib = window.nax?.ccuilib
     /* optional dependency on https://github.com/conorlawton/nax-ccuilib */
-    if (ccuilib.QuickRingMenuWidgets) {
+    if (ccuilib?.QuickRingMenuWidgets) {
         ccuilib.QuickRingMenuWidgets.addWidget({
             name: 'dev_reload',
             title: 'Game reload',

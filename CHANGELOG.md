@@ -4,12 +4,17 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Moved all mod options to CCModManager
+
 ### Fixed
 
 - Fixed `reload-level` moved the player slightly
+- Fixed crash when CCUILib is missing
 
 ## [1.6.0] 2024-03-19
 
 ### Changed
 
-- Improved `map-reload` behaviour
+- Improved `map-reload` behavior
