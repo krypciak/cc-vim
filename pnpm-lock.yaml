@@ -22,7 +22,7 @@ importers:
         version: 6.21.0(eslint@8.57.0)(typescript@5.4.2)
       ccmodmanager:
         specifier: github:CCDirectLink/CCModManager
-        version: https://codeload.github.com/CCDirectLink/CCModManager/tar.gz/297e05a5544877fb300adcdb352ab33a52951d32
+        version: https://codeload.github.com/CCDirectLink/CCModManager/tar.gz/e4a407a2d6501125e3c5036d5f8b6326e73d94ee
       esbuild:
         specifier: ^0.18.15
         version: 0.18.20
@@ -31,7 +31,7 @@ importers:
         version: 6.6.2
       nax-ccuilib:
         specifier: github:krypciak/nax-ccuilib
-        version: https://codeload.github.com/krypciak/nax-ccuilib/tar.gz/a7c59076124ee794cc3813d3e62d127fe57c1c6a
+        version: https://codeload.github.com/krypciak/nax-ccuilib/tar.gz/aa2dfe3d05827668a914a76ef6b05f4103dfe4c5
       prettier:
         specifier: 3.0.0
         version: 3.0.0
@@ -350,9 +350,9 @@ packages:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
     engines: {node: '>=6'}
 
-  ccmodmanager@https://codeload.github.com/CCDirectLink/CCModManager/tar.gz/297e05a5544877fb300adcdb352ab33a52951d32:
-    resolution: {tarball: https://codeload.github.com/CCDirectLink/CCModManager/tar.gz/297e05a5544877fb300adcdb352ab33a52951d32}
-    version: 0.9.12
+  ccmodmanager@https://codeload.github.com/CCDirectLink/CCModManager/tar.gz/e4a407a2d6501125e3c5036d5f8b6326e73d94ee:
+    resolution: {tarball: https://codeload.github.com/CCDirectLink/CCModManager/tar.gz/e4a407a2d6501125e3c5036d5f8b6326e73d94ee}
+    version: 1.0.3
 
   chalk@4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
@@ -412,6 +412,7 @@ packages:
   eslint@8.57.0:
     resolution: {integrity: sha512-dZ6+mexnaTIbSBZWgou51U6OmzIhYM2VcNdtiTtI7qPNZm35Akpr0f6vtw3w1Kmn5PYo+tZVfh13WrhpS6oLqQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   espree@9.6.1:
@@ -593,9 +594,9 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
-  nax-ccuilib@https://codeload.github.com/krypciak/nax-ccuilib/tar.gz/a7c59076124ee794cc3813d3e62d127fe57c1c6a:
-    resolution: {tarball: https://codeload.github.com/krypciak/nax-ccuilib/tar.gz/a7c59076124ee794cc3813d3e62d127fe57c1c6a}
-    version: 1.2.4
+  nax-ccuilib@https://codeload.github.com/krypciak/nax-ccuilib/tar.gz/aa2dfe3d05827668a914a76ef6b05f4103dfe4c5:
+    resolution: {tarball: https://codeload.github.com/krypciak/nax-ccuilib/tar.gz/aa2dfe3d05827668a914a76ef6b05f4103dfe4c5}
+    version: 1.4.1
 
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
@@ -1012,7 +1013,7 @@ snapshots:
 
   callsites@3.1.0: {}
 
-  ccmodmanager@https://codeload.github.com/CCDirectLink/CCModManager/tar.gz/297e05a5544877fb300adcdb352ab33a52951d32: {}
+  ccmodmanager@https://codeload.github.com/CCDirectLink/CCModManager/tar.gz/e4a407a2d6501125e3c5036d5f8b6326e73d94ee: {}
 
   chalk@4.1.2:
     dependencies:
@@ -1295,7 +1296,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  nax-ccuilib@https://codeload.github.com/krypciak/nax-ccuilib/tar.gz/a7c59076124ee794cc3813d3e62d127fe57c1c6a: {}
+  nax-ccuilib@https://codeload.github.com/krypciak/nax-ccuilib/tar.gz/aa2dfe3d05827668a914a76ef6b05f4103dfe4c5: {}
 
   once@1.4.0:
     dependencies:

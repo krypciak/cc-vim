@@ -1,7 +1,6 @@
-import 'nax-ccuilib/src/headers/nax/quick-menu-public-api.d.ts'
+import type {} from 'nax-ccuilib/src/ui/quick-menu/quick-menu-extension'
 
 export function addWidgets() {
-    // @ts-ignore
     const ccuilib = window.nax?.ccuilib
     /* optional dependency on https://github.com/conorlawton/nax-ccuilib */
     if (ccuilib?.QuickRingMenuWidgets) {
