@@ -1,4 +1,3 @@
-import VimGui from './plugin.js'
 import { addAllAliases } from './aliases/all.js'
 
 export interface Alias {
@@ -43,7 +42,11 @@ export class VimLogic {
     aliasesMap: Map<string, (...args: string[]) => void> = new Map()
     aliases: Alias[] = []
 
-    constructor(public gui: VimGui) {
+    static new() {
+        return window.vim ?? new VimLogic()
+    }
+
+    private constructor() {
         window.vim = this
         addAllAliases()
     }

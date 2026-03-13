@@ -20,9 +20,15 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^6.2.0
         version: 6.21.0(eslint@8.57.0)(typescript@5.4.2)
+      cc-instanceinator:
+        specifier: github:krypciak/cc-instanceinator
+        version: https://codeload.github.com/krypciak/cc-instanceinator/tar.gz/e535a403e746f5a421c98305ff48ed5ca242abb6
       ccmodmanager:
         specifier: github:CCDirectLink/CCModManager
         version: https://codeload.github.com/CCDirectLink/CCModManager/tar.gz/e4a407a2d6501125e3c5036d5f8b6326e73d94ee
+      crossnode:
+        specifier: github:krypciak/crossnode
+        version: https://codeload.github.com/krypciak/crossnode/tar.gz/f797ccfe24a27abc45bf42b4bd58659d88050374
       esbuild:
         specifier: ^0.18.15
         version: 0.18.20
@@ -40,7 +46,7 @@ importers:
         version: 5.4.2
       ultimate-crosscode-typedefs:
         specifier: github:krypciak/ultimate-crosscode-typedefs
-        version: https://codeload.github.com/krypciak/ultimate-crosscode-typedefs/tar.gz/937c741401c283321e525862ce8b060f109f2291
+        version: https://codeload.github.com/krypciak/ultimate-crosscode-typedefs/tar.gz/94b282e8cf20cb885027e16457001969227bda74
 
 packages:
 
@@ -350,6 +356,10 @@ packages:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
     engines: {node: '>=6'}
 
+  cc-instanceinator@https://codeload.github.com/krypciak/cc-instanceinator/tar.gz/e535a403e746f5a421c98305ff48ed5ca242abb6:
+    resolution: {tarball: https://codeload.github.com/krypciak/cc-instanceinator/tar.gz/e535a403e746f5a421c98305ff48ed5ca242abb6}
+    version: 1.1.0
+
   ccmodmanager@https://codeload.github.com/CCDirectLink/CCModManager/tar.gz/e4a407a2d6501125e3c5036d5f8b6326e73d94ee:
     resolution: {tarball: https://codeload.github.com/CCDirectLink/CCModManager/tar.gz/e4a407a2d6501125e3c5036d5f8b6326e73d94ee}
     version: 1.0.3
@@ -371,6 +381,10 @@ packages:
   cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
+
+  crossnode@https://codeload.github.com/krypciak/crossnode/tar.gz/f797ccfe24a27abc45bf42b4bd58659d88050374:
+    resolution: {tarball: https://codeload.github.com/krypciak/crossnode/tar.gz/f797ccfe24a27abc45bf42b4bd58659d88050374}
+    version: 1.0.0
 
   debug@4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
@@ -487,7 +501,7 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   globals@13.24.0:
     resolution: {integrity: sha512-AhO5QUcj8llrbG09iWhPU2B204J1xnPeL8kQmVorSsy+Sjj1sk8gIyh6cUocGmH4L0UuhAJy+hJMRA4mgA4mFQ==}
@@ -724,8 +738,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  ultimate-crosscode-typedefs@https://codeload.github.com/krypciak/ultimate-crosscode-typedefs/tar.gz/937c741401c283321e525862ce8b060f109f2291:
-    resolution: {tarball: https://codeload.github.com/krypciak/ultimate-crosscode-typedefs/tar.gz/937c741401c283321e525862ce8b060f109f2291}
+  ultimate-crosscode-typedefs@https://codeload.github.com/krypciak/ultimate-crosscode-typedefs/tar.gz/94b282e8cf20cb885027e16457001969227bda74:
+    resolution: {tarball: https://codeload.github.com/krypciak/ultimate-crosscode-typedefs/tar.gz/94b282e8cf20cb885027e16457001969227bda74}
     version: 0.0.1
     engines: {node: '>=10.0.0'}
 
@@ -1013,6 +1027,8 @@ snapshots:
 
   callsites@3.1.0: {}
 
+  cc-instanceinator@https://codeload.github.com/krypciak/cc-instanceinator/tar.gz/e535a403e746f5a421c98305ff48ed5ca242abb6: {}
+
   ccmodmanager@https://codeload.github.com/CCDirectLink/CCModManager/tar.gz/e4a407a2d6501125e3c5036d5f8b6326e73d94ee: {}
 
   chalk@4.1.2:
@@ -1033,6 +1049,8 @@ snapshots:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+
+  crossnode@https://codeload.github.com/krypciak/crossnode/tar.gz/f797ccfe24a27abc45bf42b4bd58659d88050374: {}
 
   debug@4.3.4:
     dependencies:
@@ -1393,7 +1411,7 @@ snapshots:
 
   typescript@5.4.2: {}
 
-  ultimate-crosscode-typedefs@https://codeload.github.com/krypciak/ultimate-crosscode-typedefs/tar.gz/937c741401c283321e525862ce8b060f109f2291:
+  ultimate-crosscode-typedefs@https://codeload.github.com/krypciak/ultimate-crosscode-typedefs/tar.gz/94b282e8cf20cb885027e16457001969227bda74:
     dependencies:
       '@types/jquery': 1.10.45
       '@types/node': 20.11.25

@@ -15,7 +15,7 @@ export function registerOpts() {
                         type: 'CONTROLS',
                         init: { key1: ig.KEY.SEMICOLON },
                         pressEvent() {
-                            vim.gui.show()
+                            ig.vimGui?.show()
                         },
                         global: true,
 

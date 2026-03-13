@@ -1,4 +1,4 @@
-import { VimLogic, AliasArguemntEntry } from '../logic.js'
+import { AliasArguemntEntry } from '../logic.js'
 
 export function addEntity() {
     vim.addAlias(
@@ -13,7 +13,7 @@ export function addEntity() {
                 y: y ? (y.startsWith('-') || y.startsWith('+') ? parseInt(y.substring(1)) : 0) : 0,
                 z: z ? (z.startsWith('-') || z.startsWith('+') ? parseInt(z.substring(1)) : 0) : 0,
             } as Vec3)
-            ig.game.spawnEntity(type, pos.x, pos.y, pos.z, JSON.parse(settings ?? '{}'))
+            ig.game.spawnEntity(type as sc.MapModel.EntityNames, pos.x, pos.y, pos.z, JSON.parse(settings ?? '{}'))
         },
         [
             {
