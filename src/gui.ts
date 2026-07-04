@@ -4,6 +4,8 @@ import { MainSuggestionTable } from './mainSuggestionTable'
 
 export class VimGui {
     visible: boolean = false
+
+    container: HTMLDivElement
     block: HTMLElement
     historyBlock: HTMLElement
     input: HTMLInputElement
@@ -21,6 +23,7 @@ export class VimGui {
         document.body.insertAdjacentHTML(
             'beforeend',
             `
+                <div id="vimContainer${id}">
                     <div id="vimHistory${id}"
 						style="
 							display: none;
@@ -69,9 +72,11 @@ export class VimGui {
                             left: 5%;
                         "></table>
 					</div>
+                </div>
 				`
         )
 
+        this.container = document.getElementById(`vimContainer${id}`) as HTMLDivElement
         this.historyBlock = document.getElementById(`vimHistory${id}`)!
         this.block = document.getElementById(`vim${id}`)!
         const input = (this.input = document.getElementById(`viminput${id}`) as HTMLInputElement)
@@ -126,6 +131,11 @@ export class VimGui {
         this.block.style.display = 'none'
         this.historyBlock.style.display = 'none'
         document.getElementById('game')!.focus()
+    }
+
+    destroy() {
+        this.hide()
+        this.container.remove()
     }
 
     show() {
