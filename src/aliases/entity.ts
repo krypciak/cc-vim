@@ -1,4 +1,4 @@
-import { AliasArguemntEntry } from '../logic.js'
+import type { AliasArguemntEntry } from '../logic.js'
 
 export function addEntity() {
     vim.addAlias(

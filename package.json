@@ -5,26 +5,31 @@
     "scripts": {
         "start": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --outfile=plugin.js src/plugin.ts",
         "watch": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --watch --outfile=plugin.js src/plugin.ts",
-        "build": "npx esbuild --target=es2018 --format=esm --platform=node --bundle --outfile=plugin.js --minify-syntax --minify-whitespace src/plugin.ts",
-        "format": "prettier ./src -w"
+        "build": "esbuild --target=es2018 --format=esm --platform=node --bundle --outfile=plugin.js --minify-syntax --minify-whitespace src/plugin.ts",
+        "format": "prettier ./src -w",
+        "pack": "bun pack.ts"
     },
+    "type": "module",
     "author": "krypek",
     "license": "GNU GPLv3",
     "homepage": "https://github.com/krypciak/cc-vim",
     "types": "src/global.d.ts",
     "devDependencies": {
-        "@types/jquery": "^3.5.29",
-        "@types/node": "^20.4.4",
-        "@typescript-eslint/eslint-plugin": "^6.2.0",
-        "@typescript-eslint/parser": "^6.2.0",
-        "cc-instanceinator": "github:krypciak/cc-instanceinator",
+        "@types/bun": "^1.3.14",
+        "bun": "^1.3.14",
+        "esbuild": "^0.28.1",
+        "fflate": "^0.8.3",
+        "prettier": "3.9.4",
+        "typescript": "^6.0.3"
+    },
+    "dependencies": {
+        "@types/chrome": "^0.2.2",
+        "@types/jquery": "=1.10.x",
+        "@types/node": "^26.1.0",
         "ccmodmanager": "github:CCDirectLink/CCModManager",
-        "crossnode": "github:krypciak/crossnode",
-        "esbuild": "^0.18.15",
         "fuse.js": "^6.6.2",
-        "nax-ccuilib": "github:krypciak/nax-ccuilib",
-        "prettier": "3.0.0",
-        "typescript": "^5.1.6",
-        "ultimate-crosscode-typedefs": "github:krypciak/ultimate-crosscode-typedefs"
+        "ultimate-crosscode-typedefs": "github:krypciak/ultimate-crosscode-typedefs",
+        "cc-instanceinator": "github:krypciak/cc-instanceinator",
+        "nax-ccuilib": "github:krypciak/nax-ccuilib"
     }
 }

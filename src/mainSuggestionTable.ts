@@ -1,4 +1,4 @@
-import { VimLogic, Alias, AliasArguemnt, AliasArguemntEntry } from './logic.js'
+import { VimLogic, type Alias, type AliasArguemnt, type AliasArguemntEntry } from './logic.js'
 import { SuggestionTable } from './suggestionTable.js'
 const fs: {
     writeFile(path: string, content: string, encoding: string, callback: (err: any) => void): void

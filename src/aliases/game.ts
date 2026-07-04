@@ -1,4 +1,4 @@
-import { AliasArguemntEntry } from '../logic.js'
+import type { AliasArguemntEntry } from '../logic.js'
 
 declare const chrome: { runtime: { reload: () => void } }
 

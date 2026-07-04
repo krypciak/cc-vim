@@ -1,4 +1,8 @@
 plugin.js
-node_modules
-icon.png~
 *.ccmod
+*.png~
+*.kra~
+*.kra
+node_modules
+pack
+bundle.zip
