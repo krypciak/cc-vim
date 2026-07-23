@@ -6,7 +6,7 @@ export interface Alias {
     description: string
     command: (...args: string[]) => void /* command to execute */
     condition: /* if the alias appears in the menu, updated every time the menu is shown */
-    | 'ingame' /* can only be used in-game */
+        | 'ingame' /* can only be used in-game */
         | 'global' /* can be used anywhere */
         | 'titlemenu' /* can only be used in the title menu */
         | ((ingame: boolean) => boolean) /* custom function */
@@ -20,7 +20,8 @@ export interface Alias {
 export interface AliasArguemnt {
     type: string /* value type, doesnt really do anything, not enforced */
     possibleArguments?: /* possible types, not enforced */
-    AliasArguemntEntry[] /* hard-coded values */ | (() => AliasArguemntEntry[]) /* custom function, run every time the possible values list is shown */
+        | AliasArguemntEntry[] /* hard-coded values */
+        | (() => AliasArguemntEntry[]) /* custom function, run every time the possible values list is shown */
     description: string
 }
 

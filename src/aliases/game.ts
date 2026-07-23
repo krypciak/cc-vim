@@ -110,7 +110,8 @@ export function addGame() {
                             return type !== 'INFO' && type !== 'CONTROLS'
                         })
                         .map(str => {
-                            const entryTxt: undefined | { name: string; description: string } = ig.lang.labels.sc.gui.options[str]
+                            const entryTxt: undefined | { name: string; description: string } =
+                                ig.lang.labels.sc.gui.options[str]
 
                             const keys: string[] = [str]
                             if (entryTxt?.name) {

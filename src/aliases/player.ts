@@ -15,7 +15,11 @@ export function addPlayer() {
         'ingame',
         (x?: string, y?: string, z?: string) => {
             const pos: Vec3 = ig.game.playerEntity.coll.pos
-            ig.game.playerEntity.setPos(pos.x + parseInt(x ?? '0'), pos.y + parseInt(y ?? '0'), pos.z + parseInt(z ?? '0'))
+            ig.game.playerEntity.setPos(
+                pos.x + parseInt(x ?? '0'),
+                pos.y + parseInt(y ?? '0'),
+                pos.z + parseInt(z ?? '0')
+            )
         },
         [
             { type: 'number', description: 'x to add' },

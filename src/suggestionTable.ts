@@ -66,7 +66,9 @@ export class SuggestionTable<T extends { keys: string[]; display: string[] }> {
         } else {
             suggestions = this.suggestions = this.search(inputStr)
             if (this.suggestions.length == 0 && inputStr.trim() == '') {
-                suggestions = this.suggestions = this.values.map(v => ({ score: 1, item: v, matches: undefined, refIndex: 0 }) as Fuse.FuseResult<T>)
+                suggestions = this.suggestions = this.values.map(
+                    v => ({ score: 1, item: v, matches: undefined, refIndex: 0 }) as Fuse.FuseResult<T>
+                )
             }
         }
 

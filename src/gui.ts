@@ -101,7 +101,12 @@ export class VimGui {
             const cmd = target.value.trim()
             this.mst.enter(cmd)
 
-            const run = () => this.logic.executeFromInput(cmd, this.mst.suggestions[0]?.item, this.mst.currentArgTables?.map(t => t?.suggestions[0]?.item))
+            const run = () =>
+                this.logic.executeFromInput(
+                    cmd,
+                    this.mst.suggestions[0]?.item,
+                    this.mst.currentArgTables?.map(t => t?.suggestions[0]?.item)
+                )
             if (window.instanceinator) {
                 const inst = instanceinator.instances[this.instanceId]
                 if (inst) {

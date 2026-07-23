@@ -86,7 +86,10 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
                     }
                     // arg.possibleArguments cant be a function here
                     if (arg.possibleArguments && typeof arg.possibleArguments !== 'function') {
-                        this.currentArgTables[argPos] = new SuggestionTable<AliasArguemntEntry>(this.argTable, arg.possibleArguments)
+                        this.currentArgTables[argPos] = new SuggestionTable<AliasArguemntEntry>(
+                            this.argTable,
+                            arg.possibleArguments
+                        )
                     }
                     this.currentArgTables[argPos]?.autocomplete(args[argPos] ?? '', 0)
                 }
@@ -118,7 +121,10 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
     arrowInputEvent(input: string, cursorPosition: number, dir: -1 | 1) {
         let val = this.historySuggestionTable.selectedSuggestion
         val += dir
-        const len = this.historySuggestionTable.suggestions.length == 0 ? this.historySuggestionTable.values.length : this.historySuggestionTable.suggestions.length
+        const len =
+            this.historySuggestionTable.suggestions.length == 0
+                ? this.historySuggestionTable.values.length
+                : this.historySuggestionTable.suggestions.length
 
         if (val < 0) {
             val = len - 1
