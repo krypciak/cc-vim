@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add `copy-map-name` alias
+
 ### Fixed
 
 - Improve cc-instanceinator compatibility

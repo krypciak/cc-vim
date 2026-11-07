@@ -25,6 +25,15 @@ function gotoTitle() {
     sc.model.enterTitle()
 }
 
+function copyTextToClipboard(text: string) {
+    const nwClipboard = window.nw?.Clipboard?.get()
+    if (nwClipboard) {
+        nwClipboard.set(text, 'text')
+    } else {
+        window.navigator?.clipboard?.writeText?.(text)
+    }
+}
+
 export function addGame() {
     vim.addAlias('cc-vim', 'reload', 'Reload the game without closing the window', 'global', () => {
         window.location.reload()
@@ -176,5 +185,10 @@ export function addGame() {
     vim.addAlias('cc-vim', 'reset-map-vars', 'Reset all map variables in the current map', 'ingame', () => {
         const path = ig.game.mapName.toCamel().toPath('', '')
         ig.vars.storage.map = ig.vars.storage.maps[path] = {}
+    })
+
+    vim.addAlias('cc-vim', 'copy-map-name', 'Copy map name (ig.game.mapName) to clipboard', 'ingame', () => {
+        const mapName = ig.game.mapName
+        copyTextToClipboard(mapName)
     })
 }
