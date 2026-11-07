@@ -34,7 +34,7 @@ function copyTextToClipboard(text: string) {
     }
 }
 
-export function addGame() {
+export function addGameAliases() {
     vim.addAlias('cc-vim', 'reload', 'Reload the game without closing the window', 'global', () => {
         window.location.reload()
     })
@@ -87,100 +87,6 @@ export function addGame() {
     vim.addAlias('cc-vim', 'title-screen', 'Go to title screen', 'global', () => {
         gotoTitle()
     })
-
-    vim.addAlias(
-        'cc-vim',
-        'option',
-        'Set a global option setting',
-        'global',
-        (option: string, value: string) => {
-            value = value.trim()
-            let val: any
-            if (value === 'true') {
-                val = true
-            } else if (value === 'false') {
-                val = false
-            } else if (!isNaN(parseInt(value))) {
-                val = parseInt(value)
-            } else {
-                val = value
-            }
-            sc.options.set(option, val)
-            ig.storage.saveGlobals()
-        },
-        [
-            {
-                type: 'string',
-                description: 'value name',
-                possibleArguments(): AliasArguemntEntry[] {
-                    const arr: AliasArguemntEntry[] = Object.keys(sc.options.values)
-                        .filter(str => {
-                            const type = sc.OPTIONS_DEFINITION[str].type
-                            return type !== 'INFO' && type !== 'CONTROLS'
-                        })
-                        .map(str => {
-                            const entryTxt: undefined | { name: string; description: string } =
-                                ig.lang.labels.sc.gui.options[str]
-
-                            const keys: string[] = [str]
-                            if (entryTxt?.name) {
-                                keys.push(entryTxt.name)
-                            }
-                            if (entryTxt?.description) {
-                                keys.push(entryTxt.description)
-                            }
-
-                            return { value: str, keys, display: keys }
-                        })
-                    return arr
-                },
-            },
-            {
-                type: 'string',
-                description: 'value',
-                possibleArguments(): AliasArguemntEntry[] {
-                    return [
-                        { value: 'true', keys: ['true'], display: ['true'] },
-                        { value: 'false', keys: ['false'], display: ['false'] },
-                    ]
-                    // const arr: AliasArguemntEntry[] = Object.keys(sc.options.values).filter(str => {
-                    //     const type = sc.OPTIONS_DEFINITION[str].type
-                    //     return type !== 'INFO' && type !== 'CONTROLS'
-                    // }).map(str => {
-                    //     const entryTxt: { name: string, description: string, group?: string[] } = ig.lang.labels.sc.gui.options[str]
-                    //     const entry: sc.OptionDefinition = sc.OPTIONS_DEFINITION[str]
-
-                    //     let types: [string, any][] = []
-                    //     switch (entry.type) {
-                    //         case 'LANGUAGE':
-                    //         case 'BUTTON_GROUP': {
-                    //             const vals = Object.values(entry.data)
-                    //             for (let i = 0; i < entryTxt.group!.length; i++) {
-                    //                 types.push([entryTxt.group![i], vals[i]])
-                    //             }
-                    //             break
-                    //         }
-                    //         case 'OBJECT_SLIDER': {
-                    //             types = Object.entries(entry.data).map(e => [e[0], e[1]])
-                    //             break
-                    //         }
-                    //         case 'ARRAY_SLIDER':
-                    //             for (let i = entry.data[0]; i < entry.data[1]; i += 0.1) {
-                    //                 types.push([i.toString(), i])
-                    //             }
-                    //             break
-                    //         case 'CHECKBOX':
-                    //             types = [['true', true], ['false', false]]
-                    //             break
-                    //     }
-                    //     const keys: string[] = types.map(t => t[0])
-                    //     return { value: keys[0], keys, display: keys }
-                    // })
-                    // return arr
-                },
-            },
-        ]
-    )
 
     vim.addAlias('cc-vim', 'reset-map-vars', 'Reset all map variables in the current map', 'ingame', () => {
         const path = ig.game.mapName.toCamel().toPath('', '')

@@ -1,6 +1,6 @@
 import type { AliasArguemntEntry } from '../logic.js'
 
-export function addPlayer() {
+export function addPlayerAliases() {
     vim.addAlias('cc-vim', 'player', 'Prints player entity', 'ingame', () => {
         console.log(ig.copy(ig.game.playerEntity))
     })

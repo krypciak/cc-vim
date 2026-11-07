@@ -1,6 +1,6 @@
 import type { AliasArguemntEntry } from '../logic.js'
 
-export function addEntity() {
+export function addEntityAliases() {
     vim.addAlias(
         'cc-vim',
         'spawn-entity',

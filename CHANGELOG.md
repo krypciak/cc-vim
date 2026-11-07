@@ -7,6 +7,7 @@
 ### Added
 
 - Add `copy-map-name` alias
+- Add `modmanager-option` alias to change mod options registered in CCModManager
 
 ### Fixed
 

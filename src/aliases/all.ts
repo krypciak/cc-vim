@@ -1,9 +1,11 @@
-import { addGame } from './game.js'
-import { addPlayer } from './player.js'
-import { addEntity } from './entity.js'
+import { addGameAliases } from './game.js'
+import { addPlayerAliases } from './player.js'
+import { addEntityAliases } from './entity.js'
+import { addOptionsAliases } from './options.js'
 
 export function addAllAliases() {
-    addGame()
-    addPlayer()
-    addEntity()
+    addGameAliases()
+    addPlayerAliases()
+    addEntityAliases()
+    addOptionsAliases()
 }
