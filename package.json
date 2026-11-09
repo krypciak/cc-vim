@@ -1,6 +1,6 @@
 {
     "name": "cc-vim",
-    "version": "1.6.3",
+    "version": "1.7.0",
     "description": "Adds a popup command prompt",
     "homepage": "https://github.com/krypciak/cc-vim",
     "license": "GNU GPLv3",
