@@ -90,7 +90,12 @@ export class VimLogic {
                         return !ingame
                 }
             } else {
-                return a.condition(ingame)
+                try {
+                    return a.condition(ingame)
+                } catch (e) {
+                    console.error('error while evaluating condition of alias', a.name, e)
+                    return false
+                }
             }
         })
         for (let i = 0; i < filtered.length; i++) {
@@ -99,7 +104,11 @@ export class VimLogic {
                 const arg: AliasArguemnt = alias.arguments[h]
                 if (arg.possibleArguments && typeof arg.possibleArguments === 'function') {
                     alias.arguments[h] = ig.copy(arg)
-                    alias.arguments[h].possibleArguments = arg.possibleArguments()
+                    try {
+                        alias.arguments[h].possibleArguments = arg.possibleArguments()
+                    } catch (e) {
+                        console.error('error while evaluating possibleArguments of alias', alias.name, e)
+                    }
                 }
             }
         }
@@ -191,7 +200,11 @@ export class VimLogic {
                 }
             }
 
-            fallbackSuggestion.command(...args.map(str => str.trim()))
+            try {
+                fallbackSuggestion.command(...args.map(str => str.trim()))
+            } catch (e) {
+                console.error('error while executing command of alias', fallbackSuggestion.name, e)
+            }
         }
     }
 }

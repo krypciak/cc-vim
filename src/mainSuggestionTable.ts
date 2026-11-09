@@ -133,8 +133,11 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
         }
         this.historySuggestionTable.selectedSuggestion = val
         this.historySuggestionTable.autocomplete(input, cursorPosition, true)
-        this.input.value = input = this.historySuggestionTable.getSelectedSuggestion().item.display[0]
-        this.autocomplete(input, cursorPosition, false, true)
+        const suggestion = this.historySuggestionTable.getSelectedSuggestion()
+        if (suggestion) {
+            this.input.value = input = suggestion.item.display[0]
+            this.autocomplete(input, cursorPosition, false, true)
+        }
     }
 
     enter(input: string) {

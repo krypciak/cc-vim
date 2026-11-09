@@ -12,6 +12,7 @@
 ### Fixed
 
 - Improve cc-instanceinator compatibility
+- Safeguard some code paths from exceptions
 
 ## [1.6.3] 2026-04-03
 
