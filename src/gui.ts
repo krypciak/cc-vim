@@ -108,13 +108,12 @@ export class VimGui {
         if (event.key == 'Enter') {
             event.preventDefault()
             const cmd = target.value.trim()
-            this.mst.enter(cmd)
 
             this.runTask(() =>
                 this.logic.executeFromInput(
                     cmd,
-                    this.mst.suggestions[0]?.item,
-                    this.mst.currentArgTables?.map(t => t?.suggestions[0]?.item)
+                    this.mst.getSelectedSuggestion().item,
+                    this.mst.currentArgTables?.map(t => t?.getSelectedSuggestion()?.item)
                 )
             )
 
@@ -126,12 +125,12 @@ export class VimGui {
             event.preventDefault()
         } else if (event.key == 'ArrowLeft' || event.key == 'ArrowRight') {
             this.mst.inputEvent(target.value, this.input.selectionStart! + (event.key == 'ArrowLeft' ? -1 : 1))
-            this.mst.historySuggestionTable.selectedSuggestion = -1
+            // this.mst.historySuggestionTable.selectedSuggestion = -1
         } else if (event.key == 'ArrowUp' || event.key == 'ArrowDown') {
             event.preventDefault()
-            this.mst.arrowInputEvent(target.value, this.input.selectionStart!, event.key == 'ArrowUp' ? 1 : -1)
+            this.mst.arrowInputEvent(target.value, this.input.selectionStart!, event.key == 'ArrowUp' ? -1 : 1)
         } else {
-            this.mst.historySuggestionTable.selectedSuggestion = -1
+            // this.mst.historySuggestionTable.selectedSuggestion = -1
         }
     }
 
@@ -163,15 +162,11 @@ export class VimGui {
                 this.suggestionArgTable,
                 this.historyTable,
                 this.suggestionArgType,
-                this.logic,
-                'assets/mod-data/cc-vim/history.json'
+                this.logic
             )
-            await this.mst.loadHistory()
         }
-        this.runTask(async () => {
-            this.mst.values = this.logic.getPossibleAliases()
-            this.mst.updateValues()
-            await this.mst.autocomplete('', 0)
-        })
+        this.mst.values = this.logic.getPossibleAliases()
+        this.mst.updateValues()
+        await this.mst.autocomplete('', 0)
     }
 }

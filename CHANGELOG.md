@@ -4,13 +4,16 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Replace history with suggestion selection 
+
 ### Removed
 
 - Remove reload map and reload game nax-ccuilib widgets
 
 ### Fixed
 
-- Make file operations async to speed up game boot time
 - Fix first menu open running on a wrong instanceinator instance
 
 ## [1.7.0] 2026-11-09

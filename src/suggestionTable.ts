@@ -18,6 +18,7 @@ export class SuggestionTable<T extends { keys: string[]; display: string[] }> {
     completionThreshold: number = 1
     suggestions!: Fuse.FuseResult<T>[]
     selectedSuggestion: number = 0
+    viewScroll: number = 0
 
     constructor(
         public table: HTMLTableElement,
@@ -72,7 +73,9 @@ export class SuggestionTable<T extends { keys: string[]; display: string[] }> {
             }
         }
 
-        for (let i = 0; i < Math.min(this.maxResults, suggestions.length); i++) {
+        const displayCount = Math.min(this.maxResults, suggestions.length)
+        const startI = displayCount == this.maxResults ? this.viewScroll : 0
+        for (let i = startI; i < startI + displayCount; i++) {
             const searchResult = suggestions[i]
             const value: T = searchResult.item
 
