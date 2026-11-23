@@ -1,19 +1,5 @@
 import type { AliasArguemntEntry } from '../logic.js'
 
-declare const chrome: { runtime: { reload: () => void } }
-
-declare global {
-    namespace ig {
-        interface Storage {
-            saveGlobals(this: this): void
-        }
-    }
-    namespace sc {
-        interface OptionModel {
-            set(this: this, option: string, value: any): void
-        }
-    }
-}
 function nukeInteractable() {
     ig.interact.entries.forEach(e => ig.interact.removeEntry(e))
 }
