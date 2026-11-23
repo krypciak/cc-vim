@@ -2,6 +2,9 @@ import { VimGui } from './gui.js'
 import { registerOpts } from './options.js'
 
 const fs: typeof import('fs') = (0, eval)("require('fs')")
+async function fileExists(path: string) {
+    return !!(await fs.promises.stat(path).catch(_ => false))
+}
 
 export default class VimPlugin {
     dir: string
@@ -10,16 +13,16 @@ export default class VimPlugin {
         this.dir = mod.baseDirectory
     }
 
-    async prestart() {
+    prestart() {
         registerOpts()
         this.addInjects()
 
-        if (!fs.existsSync('assets/mod-data')) {
-            fs.mkdirSync('assets/mod-data')
-        }
-        if (!fs.existsSync('assets/mod-data/cc-vim')) {
-            fs.mkdirSync('assets/mod-data/cc-vim')
-        }
+        void this.mkdirs()
+    }
+
+    async mkdirs() {
+        if (!(await fileExists('assets/mod-data'))) await fs.promises.mkdir('assets/mod-data')
+        if (!(await fileExists('assets/mod-data/cc-vim'))) await fs.promises.mkdir('assets/mod-data/cc-vim')
     }
 
     addInjects() {

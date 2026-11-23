@@ -1,9 +1,7 @@
 import { VimLogic, type Alias, type AliasArguemnt, type AliasArguemntEntry } from './logic.js'
 import { SuggestionTable } from './suggestionTable.js'
-const fs: {
-    writeFile(path: string, content: string, encoding: string, callback: (err: any) => void): void
-    readFileSync(path: string): string
-} = require('fs')
+
+const fs: typeof import('fs') = (0, eval)("require('fs')")
 
 export class MainSuggestionTable extends SuggestionTable<Alias> {
     currentArgTables!: SuggestionTable<AliasArguemntEntry>[] | null
@@ -22,7 +20,6 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
         public historyFile: string
     ) {
         super(table, [])
-        this.loadHistory()
     }
 
     getArgPos(args: string[], pos: number): number {
@@ -157,9 +154,10 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
         })
     }
 
-    loadHistory() {
+    async loadHistory() {
         try {
-            this.history = JSON.parse(fs.readFileSync(this.historyFile))
+            const str = await fs.promises.readFile(this.historyFile, 'utf-8')
+            this.history = JSON.parse(str)
         } catch (e) {
             this.history = {}
         }

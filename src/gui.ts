@@ -143,7 +143,7 @@ export class VimGui {
         this.container.remove()
     }
 
-    show() {
+    async show() {
         this.visible = true
         this.block.style.display = 'block'
         this.historyBlock.style.display = 'block'
@@ -162,6 +162,7 @@ export class VimGui {
                 this.logic,
                 'assets/mod-data/cc-vim/history.json'
             )
+            await this.mst.loadHistory()
         }
         this.mst.values = this.logic.getPossibleAliases()
         this.mst.updateValues()

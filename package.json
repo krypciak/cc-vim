@@ -15,9 +15,9 @@
         "pack": "bun pack.ts"
     },
     "dependencies": {
-        "@types/chrome": "^0.2.8",
+        "@types/chrome": "^0.2.9",
         "@types/jquery": "^1.10.45",
-        "@types/node": "^26.4.1",
+        "@types/node": "^26.6.6",
         "cc-instanceinator": "github:krypciak/cc-instanceinator",
         "ccmodmanager": "github:CCDirectLink/CCModManager",
         "fuse.js": "^6.6.2",
@@ -25,8 +25,8 @@
         "ultimate-crosscode-typedefs": "github:krypciak/ultimate-crosscode-typedefs"
     },
     "devDependencies": {
-        "@types/bun": "^1.4.1",
-        "bun": "^1.4.2",
+        "@types/bun": "^1.4.5",
+        "bun": "^1.4.5",
         "esbuild": "^0.28.2",
         "fflate": "^0.8.3",
         "oxfmt": "^0.60.0",

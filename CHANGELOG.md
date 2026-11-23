@@ -8,6 +8,10 @@
 
 - Remove reload map and reload game nax-ccuilib widgets
 
+### Fixed
+
+- Make file operations async to speed up game boot time
+
 ## [1.7.0] 2026-11-09
 
 ### Added
