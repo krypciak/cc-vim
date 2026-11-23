@@ -1,4 +1,3 @@
-import { runTask } from 'cc-instanceinator/src/inst-util'
 import { VimLogic } from './logic'
 import { MainSuggestionTable } from './mainSuggestionTable'
 
@@ -94,6 +93,16 @@ export class VimGui {
         this.hide()
     }
 
+    private runTask(func: () => void) {
+        if (window.instanceinator) {
+            const inst = instanceinator.instances[this.instanceId]
+            if (!inst) return
+            return instanceinator.runTask(inst, func)
+        } else {
+            return func()
+        }
+    }
+
     keyEvent(event: KeyboardEvent) {
         const target = event.target as HTMLInputElement
         if (event.key == 'Enter') {
@@ -101,18 +110,13 @@ export class VimGui {
             const cmd = target.value.trim()
             this.mst.enter(cmd)
 
-            const run = () =>
+            this.runTask(() =>
                 this.logic.executeFromInput(
                     cmd,
                     this.mst.suggestions[0]?.item,
                     this.mst.currentArgTables?.map(t => t?.suggestions[0]?.item)
                 )
-            if (window.instanceinator) {
-                const inst = instanceinator.instances[this.instanceId]
-                if (inst) {
-                    runTask(inst, run)
-                }
-            } else run()
+            )
 
             this.input.value = ''
             this.hide()
@@ -164,8 +168,10 @@ export class VimGui {
             )
             await this.mst.loadHistory()
         }
-        this.mst.values = this.logic.getPossibleAliases()
-        this.mst.updateValues()
-        this.mst.autocomplete('', 0)
+        this.runTask(async () => {
+            this.mst.values = this.logic.getPossibleAliases()
+            this.mst.updateValues()
+            await this.mst.autocomplete('', 0)
+        })
     }
 }
