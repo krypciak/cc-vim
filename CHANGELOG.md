@@ -11,6 +11,7 @@
 ### Fixed
 
 - Make file operations async to speed up game boot time
+- Fix first menu open running on a wrong instanceinator instance
 
 ## [1.7.0] 2026-11-09
 
