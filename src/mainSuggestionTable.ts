@@ -1,7 +1,6 @@
-import { VimLogic, type Alias, type AliasArguemnt, type AliasArguemntEntry } from './logic.js'
-import { SuggestionTable } from './suggestionTable.js'
-
-const fs: typeof import('fs') = (0, eval)("require('fs')")
+import { readFile, writeFile } from 'ccmodmanager/src/fs-util'
+import { VimLogic, type Alias, type AliasArguemnt, type AliasArguemntEntry } from './logic'
+import { SuggestionTable } from './suggestionTable'
 
 export class MainSuggestionTable extends SuggestionTable<Alias> {
     currentArgTables!: SuggestionTable<AliasArguemntEntry>[] | null
@@ -147,16 +146,12 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
     }
 
     saveHistory() {
-        fs.writeFile(this.historyFile, JSON.stringify(this.history), 'utf8', err => {
-            if (err) {
-                console.error(err)
-            }
-        })
+        void writeFile(this.historyFile, JSON.stringify(this.history), 'utf8')
     }
 
     async loadHistory() {
         try {
-            const str = await fs.promises.readFile(this.historyFile, 'utf-8')
+            const str = await readFile(this.historyFile, 'utf-8')
             this.history = JSON.parse(str)
         } catch (e) {
             this.history = {}

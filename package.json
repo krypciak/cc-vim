@@ -8,9 +8,9 @@
     "type": "module",
     "types": "src/global.d.ts",
     "scripts": {
-        "start": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --outfile=plugin.js src/plugin.ts",
-        "watch": "esbuild --target=es2018 --format=esm --platform=node --bundle --sourcemap=inline --watch --outfile=plugin.js src/plugin.ts",
-        "build": "esbuild --target=es2018 --format=esm --platform=node --bundle --outfile=plugin.js --minify-syntax --minify-whitespace src/plugin.ts",
+        "start": "esbuild --target=es2018 --format=esm --platform=node --bundle --external:rimraf --sourcemap=inline --outfile=plugin.js src/plugin.ts",
+        "watch": "esbuild --target=es2018 --format=esm --platform=node --bundle --external:rimraf --sourcemap=inline --watch --outfile=plugin.js src/plugin.ts",
+        "build": "esbuild --target=es2018 --format=esm --platform=node --bundle --external:rimraf --outfile=plugin.js --minify-syntax --minify-whitespace src/plugin.ts",
         "format": "oxfmt",
         "pack": "bun pack.ts"
     },
