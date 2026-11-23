@@ -3,6 +3,11 @@
 # Change Log
 
 ## [Unreleased]
+
+### Removed
+
+- Remove reload map and reload game nax-ccuilib widgets
+
 ## [1.7.0] 2026-11-09
 
 ### Added

@@ -1,6 +1,5 @@
 import { VimGui } from './gui.js'
 import { registerOpts } from './options.js'
-import { addWidgets } from './widgets.js'
 
 const fs: typeof import('fs') = (0, eval)("require('fs')")
 
@@ -21,8 +20,6 @@ export default class VimPlugin {
         if (!fs.existsSync('assets/mod-data/cc-vim')) {
             fs.mkdirSync('assets/mod-data/cc-vim')
         }
-
-        addWidgets()
     }
 
     addInjects() {
