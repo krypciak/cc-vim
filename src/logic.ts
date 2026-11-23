@@ -21,7 +21,10 @@ export interface AliasArguemnt {
     type: string /* value type, doesnt really do anything, not enforced */
     possibleArguments?: /* possible types, not enforced */
         | AliasArguemntEntry[] /* hard-coded values */
-        | (() => AliasArguemntEntry[]) /* custom function, run every time the possible values list is shown */
+        | (() =>
+              | AliasArguemntEntry[]
+              | Promise<AliasArguemntEntry[]>) /* custom function, run every time the possible values list is shown */
+        | Promise<AliasArguemntEntry[]>
     description: string
 }
 
@@ -98,20 +101,6 @@ export class VimLogic {
                 }
             }
         })
-        for (let i = 0; i < filtered.length; i++) {
-            const alias = filtered[i]
-            for (let h = 0; h < alias.arguments.length; h++) {
-                const arg: AliasArguemnt = alias.arguments[h]
-                if (arg.possibleArguments && typeof arg.possibleArguments === 'function') {
-                    alias.arguments[h] = ig.copy(arg)
-                    try {
-                        alias.arguments[h].possibleArguments = arg.possibleArguments()
-                    } catch (e) {
-                        console.error('error while evaluating possibleArguments of alias', alias.name, e)
-                    }
-                }
-            }
-        }
         return filtered
     }
 

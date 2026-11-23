@@ -33,7 +33,7 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
         return wordIndex
     }
 
-    autocomplete(inputValue: string, cursorPosition: number, noSearch: boolean = false, noHistorySearch = false) {
+    async autocomplete(inputValue: string, cursorPosition: number, noSearch: boolean = false, noHistorySearch = false) {
         this.historySuggestionTable.autocomplete(inputValue, cursorPosition, noHistorySearch)
 
         if (inputValue.startsWith('!')) {
@@ -81,10 +81,11 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
                         this.currentArgTables = []
                     }
                     // arg.possibleArguments cant be a function here
-                    if (arg.possibleArguments && typeof arg.possibleArguments !== 'function') {
+                    const possibleArguments = await this.populateAliasPossibleArguments(alias, arg, argPos)
+                    if (possibleArguments) {
                         this.currentArgTables[argPos] = new SuggestionTable<AliasArguemntEntry>(
                             this.argTable,
-                            arg.possibleArguments
+                            possibleArguments
                         )
                     }
                     this.currentArgTables[argPos]?.autocomplete(args[argPos] ?? '', 0)
@@ -93,6 +94,25 @@ export class MainSuggestionTable extends SuggestionTable<Alias> {
                 this.argTypeTable.innerHTML = ''
                 this.argTable.innerHTML = ''
                 this.currentArgTables = null
+            }
+        }
+    }
+
+    private async populateAliasPossibleArguments(
+        alias: Alias,
+        arg: AliasArguemnt,
+        argPos: number
+    ): Promise<AliasArguemntEntry[] | undefined> {
+        if (arg.possibleArguments) {
+            if (typeof arg.possibleArguments === 'function') {
+                alias.arguments[argPos] = ig.copy(arg)
+                try {
+                    return (alias.arguments[argPos].possibleArguments = arg.possibleArguments())
+                } catch (e) {
+                    console.error('error while evaluating possibleArguments of alias', alias.name, e)
+                }
+            } else {
+                return arg.possibleArguments
             }
         }
     }
